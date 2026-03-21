@@ -1,0 +1,181 @@
+{
+  "common": {
+    "next": "Next",
+    "back": "Back",
+    "submit": "Submit Inquiry",
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "required": "This field is required",
+    "optional": "Optional",
+    "close": "Close",
+    "apply": "Apply",
+    "skip": "Skip",
+    "download_pdf": "Download PDF",
+    "share_quote": "Share Quote",
+    "copied": "Link copied!",
+    "whatsapp": "Chat on WhatsApp"
+  },
+  "steps": {
+    "0": { "title": "Choose Language", "desc": "Select your preferred language" },
+    "1": { "title": "Event Details", "desc": "Tell us about your event" },
+    "2": { "title": "Location", "desc": "Where is your event?" },
+    "3": { "title": "Services", "desc": "Choose your services" },
+    "4": { "title": "Customise", "desc": "Add extras to your package" },
+    "5": { "title": "Your Quote", "desc": "Review your personalised quote" },
+    "6": { "title": "Contact", "desc": "Send us your inquiry" }
+  },
+  "language": {
+    "select_title": "Welcome",
+    "select_subtitle": "Please select your language",
+    "english": "English",
+    "finnish": "Finnish (Suomi)",
+    "auto_detected": "Language detected",
+    "auto_advance": "Continuing in {{seconds}}s\u2026",
+    "change": "Change language"
+  },
+  "event": {
+    "title": "Event Details",
+    "type_label": "What type of event?",
+    "date_label": "Event Date",
+    "duration_label": "Duration",
+    "duration_hours": "{{hours}} hours",
+    "guests_label": "Number of Guests",
+    "venue_label": "Venue Name",
+    "venue_placeholder": "e.g. Helsinki Convention Centre",
+    "types": {
+      "wedding": "Wedding",
+      "corporate": "Corporate",
+      "private": "Private Party",
+      "festival": "Festival",
+      "other": "Other"
+    }
+  },
+  "location": {
+    "title": "Event Location",
+    "placeholder": "Search for venue address\u2026",
+    "distance_chip": "{{km}} km from Helsinki",
+    "travel_fee": "Travel fee: \u20ac{{fee}}",
+    "free_travel": "Free travel included",
+    "overnight_notice": "Distance over 150 km \u2014 overnight accommodation (\u20ac120) will be added",
+    "no_location": "No location selected yet"
+  },
+  "services": {
+    "title": "Select Services",
+    "selected_count": "{{count}} service selected",
+    "selected_count_plural": "{{count}} services selected",
+    "from_price": "from \u20ac{{price}}",
+    "popular": "Most popular",
+    "select_service": "Select",
+    "deselect_service": "Selected",
+    "base_price": "Base price: \u20ac{{price}}",
+    "ai_recommendation": "AI Recommendation",
+    "apply_recommendation": "Apply Recommendation",
+    "running_total": "{{count}} services \u00b7 from \u20ac{{price}}"
+  },
+  "addons": {
+    "title": "Customise Your Package",
+    "per_event": "per event",
+    "per_unit": "per unit",
+    "per_shot": "per shot",
+    "quantity": "Qty",
+    "dj": {
+      "mc_hosting": "MC Hosting",
+      "mc_hosting_desc": "Professional event MC and announcements",
+      "vinyl_setup": "Vinyl Setup",
+      "vinyl_setup_desc": "Classic vinyl turntable setup",
+      "extra_dj": "Second DJ",
+      "extra_dj_desc": "Two DJs for longer events",
+      "requests_app": "Song Requests App",
+      "requests_app_desc": "Guests submit requests via smartphone"
+    },
+    "audio": {
+      "subwoofer_upgrade": "Subwoofer Upgrade",
+      "subwoofer_upgrade_desc": "Enhanced bass for larger venues",
+      "monitor_speakers": "Monitor Speakers",
+      "monitor_speakers_desc": "Stage monitor wedges",
+      "wireless_mics": "Wireless Microphones",
+      "wireless_mics_desc": "Handheld or lapel microphones",
+      "hearing_loop": "Hearing Loop",
+      "hearing_loop_desc": "Induction loop for hearing aid users"
+    },
+    "lighting": {
+      "moving_heads": "Moving Heads",
+      "moving_heads_desc": "Dynamic automated spotlights",
+      "gobo_projection": "Gobo Projection",
+      "gobo_projection_desc": "Custom logo or pattern projection",
+      "uplighting": "Uplighting",
+      "uplighting_desc": "Ambient wall and pillar lighting",
+      "led_dance_floor": "LED Dance Floor",
+      "led_dance_floor_desc": "Illuminated dance floor panels"
+    },
+    "special_fx": {
+      "cold_sparks": "Cold Sparks",
+      "cold_sparks_desc": "Safe indoor spark fountains",
+      "co2_jets": "CO2 Jets",
+      "co2_jets_desc": "Powerful CO2 blast cannons",
+      "smoke_machine": "Smoke Machine",
+      "smoke_machine_desc": "Atmospheric haze or fog",
+      "bubble_machine": "Bubble Machine",
+      "bubble_machine_desc": "Festive bubble effects",
+      "confetti_cannon": "Confetti Cannon",
+      "confetti_cannon_desc": "Single-shot confetti burst"
+    }
+  },
+  "quote": {
+    "title": "Your Quote",
+    "id_label": "Quote ID",
+    "valid_until": "Valid until",
+    "event_summary": "Event Summary",
+    "line_items": "Services",
+    "base": "Base",
+    "duration_cost": "Duration ({{hours}}h)",
+    "addons_cost": "Extras",
+    "subtotal": "Subtotal",
+    "surcharges": "Surcharges",
+    "weekend_surcharge": "Weekend (+20%)",
+    "high_season_surcharge": "High Season (+15%)",
+    "last_minute_surcharge": "Last Minute (+10%)",
+    "package_discount": "Package Discount",
+    "travel_fee": "Travel Fee",
+    "overnight_fee": "Overnight Allowance",
+    "subtotal_ex_vat": "Subtotal (ex VAT)",
+    "vat": "VAT (24%)",
+    "total": "Total",
+    "incl_vat": "inc. VAT",
+    "excl_vat": "excl. VAT",
+    "toggle_vat": "Show prices {{mode}}",
+    "expires_in": "Expires in {{days}} days",
+    "expired": "This quote has expired",
+    "company_placeholder": "Your Company",
+    "free": "Free",
+    "included": "Included"
+  },
+  "contact": {
+    "title": "Send Inquiry",
+    "name_label": "Full Name",
+    "name_placeholder": "Your full name",
+    "email_label": "Email Address",
+    "email_placeholder": "your@email.com",
+    "phone_label": "Phone Number",
+    "phone_placeholder": "+358 40 123 4567",
+    "message_label": "Message",
+    "message_placeholder": "Any additional details\u2026",
+    "submit": "Send Inquiry",
+    "submitting": "Sending\u2026",
+    "success_title": "Inquiry Sent!",
+    "success_desc": "We'll be in touch within 24 hours. Your quote reference is {{quoteId}}.",
+    "whatsapp_cta": "Prefer to chat?",
+    "validation": {
+      "name_min": "Name must be at least 2 characters",
+      "email_invalid": "Please enter a valid email address",
+      "phone_invalid": "Please enter a valid phone number (international format)"
+    }
+  },
+  "ai": {
+    "loading": "Getting AI recommendation\u2026",
+    "title": "AI Recommendation",
+    "for_your_event": "For your {{eventType}}",
+    "apply": "Apply This Recommendation",
+    "error": "Could not load recommendation"
+  }
+}

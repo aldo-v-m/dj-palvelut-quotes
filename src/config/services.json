@@ -1,0 +1,42 @@
+[
+  {
+    "id": "dj",
+    "icon": "Music",
+    "color": "purple",
+    "name_en": "DJ Services",
+    "name_fi": "DJ-palvelut",
+    "desc_en": "Professional DJ with premium sound system and curated playlists",
+    "desc_fi": "Ammattitaitoinen DJ huippulaadukkaalla äänijärjestelmällä",
+    "popular": true
+  },
+  {
+    "id": "audio",
+    "icon": "Speaker",
+    "color": "blue",
+    "name_en": "Audio Systems",
+    "name_fi": "Äänijärjestelmät",
+    "desc_en": "Line arrays, subwoofers, wireless microphones and mixing",
+    "desc_fi": "Line arrayt, subwooferit, langattomat mikrofonit ja miksaus",
+    "popular": false
+  },
+  {
+    "id": "lighting",
+    "icon": "Zap",
+    "color": "amber",
+    "name_en": "Stage Lighting",
+    "name_fi": "Valaistus",
+    "desc_en": "Dynamic LED rigs, moving heads, gobos, and ambient uplighting",
+    "desc_fi": "Dynaamiset LED-rikit, moving head -valot, goboprojektion ja tunnelmavalaistus",
+    "popular": false
+  },
+  {
+    "id": "special_fx",
+    "icon": "Sparkles",
+    "color": "coral",
+    "name_en": "Special Effects",
+    "name_fi": "Erikoisefektit",
+    "desc_en": "Cold sparks, CO2 jets, smoke, confetti and more",
+    "desc_fi": "Kylmät kipinät, CO2-suihkut, savu, konfetti ja paljon muuta",
+    "popular": false
+  }
+]
