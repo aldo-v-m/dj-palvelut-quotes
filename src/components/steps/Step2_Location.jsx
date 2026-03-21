@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MapPin, Navigation } from 'lucide-react'
+import { MapPin, Navigation, Loader2 } from 'lucide-react'
 import useQuoteStore from '../../store/quoteStore'
 import { useDistanceCalc } from '../../hooks/useDistanceCalc'
 import MapEmbed from '../ui/MapEmbed'
@@ -9,20 +9,38 @@ import pricing from '../../config/pricing.json'
 export default function Step2_Location() {
   const { t } = useTranslation()
   const { location, nextStep, prevStep } = useQuoteStore()
-  const { initAutocomplete } = useDistanceCalc()
-  const inputRef = useRef(null)
-
-  useEffect(() => {
-    if (inputRef.current) {
-      initAutocomplete(inputRef.current)
-    }
-  }, [initAutocomplete])
+  const { getSuggestions, selectPlace } = useDistanceCalc()
+  const [inputValue, setInputValue] = useState(location.address || '')
+  const [suggestions, setSuggestions] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const debounceRef = useRef(null)
 
   const travelFee = location.distanceKm > pricing.travel.free_km
     ? Math.round((location.distanceKm - pricing.travel.free_km) * pricing.travel.rate_per_km * 100) / 100
     : 0
-
   const isOvernight = location.distanceKm > pricing.travel.overnight_threshold_km
+
+  const handleInput = useCallback((e) => {
+    const val = e.target.value
+    setInputValue(val)
+    clearTimeout(debounceRef.current)
+    if (val.length < 2) { setSuggestions([]); setOpen(false); return }
+    setLoading(true)
+    debounceRef.current = setTimeout(async () => {
+      const results = await getSuggestions(val)
+      setSuggestions(results)
+      setOpen(results.length > 0)
+      setLoading(false)
+    }, 300)
+  }, [getSuggestions])
+
+  const handleSelect = useCallback(async (suggestion) => {
+    setInputValue(suggestion.description)
+    setSuggestions([])
+    setOpen(false)
+    await selectPlace(suggestion.place_id, suggestion.description)
+  }, [selectPlace])
 
   return (
     <div className="px-4 py-6 space-y-5 pb-24">
@@ -34,21 +52,46 @@ export default function Step2_Location() {
       </div>
 
       <div className="relative">
-        <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
+        <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none" style={{ zIndex: 1 }} />
+        {loading && (
+          <Loader2 size={14} className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-[var(--color-text-muted)]" />
+        )}
         <input
-          ref={inputRef}
           type="text"
-          defaultValue={location.address}
+          value={inputValue}
+          onChange={handleInput}
+          onFocus={() => suggestions.length > 0 && setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
           placeholder={t('location.placeholder')}
+          autoComplete="off"
           className="w-full pl-10 pr-4 py-3 rounded-xl text-[var(--color-text)] text-sm placeholder-[var(--color-text-muted)]"
           style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
         />
+        {open && suggestions.length > 0 && (
+          <ul
+            className="absolute left-0 right-0 top-full mt-1 rounded-xl overflow-hidden shadow-xl"
+            style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', zIndex: 9999 }}
+          >
+            {suggestions.map((s) => (
+              <li
+                key={s.place_id}
+                onMouseDown={() => handleSelect(s)}
+                className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-white/5 text-sm"
+              >
+                <MapPin size={14} className="mt-0.5 shrink-0 text-[var(--color-accent)]" />
+                <div>
+                  <span className="text-[var(--color-text)]">{s.structured_formatting?.main_text}</span>
+                  <span className="block text-xs text-[var(--color-text-muted)]">{s.structured_formatting?.secondary_text}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {location.address && (
         <div className="space-y-3">
           <MapEmbed lat={location.lat} lng={location.lng} address={location.address} />
-
           {location.distanceKm !== null && (
             <div className="flex items-center gap-2 flex-wrap">
               <div
@@ -74,7 +117,6 @@ export default function Step2_Location() {
               </div>
             </div>
           )}
-
           {isOvernight && (
             <div
               className="flex items-start gap-3 p-3 rounded-xl text-sm"

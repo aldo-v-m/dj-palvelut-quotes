@@ -86,7 +86,7 @@ export default function App() {
 
         {currentStep > 0 && <StepIndicator />}
 
-        <div className="relative overflow-hidden">
+        <div className="relative">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentStep}
