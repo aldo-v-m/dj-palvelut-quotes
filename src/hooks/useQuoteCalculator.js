@@ -56,17 +56,18 @@ export function useQuoteCalculator() {
 
     const servicesSubtotal = lineItems.reduce((sum, li) => sum + li.subtotal, 0)
 
-    // Travel fee
+    // Travel fee — new zone rules
     let distanceKm = location.distanceKm
     if (distanceKm === null && location.lat && location.lng) {
       const hqLat = parseFloat(import.meta.env.VITE_HQ_LAT || 60.1699)
       const hqLng = parseFloat(import.meta.env.VITE_HQ_LNG || 24.9384)
       distanceKm = haversineKm(hqLat, hqLng, location.lat, location.lng) * 1.3
     }
-    const travelFee = distanceKm > pricing.travel.free_km
-      ? Math.round((distanceKm - pricing.travel.free_km) * pricing.travel.rate_per_km * 100) / 100
+    const outOfRange = distanceKm !== null && distanceKm > pricing.travel.out_of_range_km
+    const travelFee = (!outOfRange && distanceKm > pricing.travel.free_km)
+      ? Math.round((distanceKm - pricing.travel.free_km) * pricing.travel.rate_per_km_one_way * 2 * 100) / 100
       : 0
-    const overnightFee = distanceKm > pricing.travel.overnight_threshold_km
+    const overnightFee = (!outOfRange && distanceKm > pricing.travel.overnight_threshold_km)
       ? pricing.travel.overnight_allowance
       : 0
 
@@ -82,7 +83,6 @@ export function useQuoteCalculator() {
 
     // Surcharges (hidden from customer, applied to total silently)
     let surchargeMultiplier = 1
-    let weekendAmount = 0
     let highSeasonAmount = 0
     let lastMinuteAmount = 0
 
@@ -93,10 +93,6 @@ export function useQuoteCalculator() {
       const today = new Date()
       const daysUntil = Math.floor((d - today) / (1000 * 60 * 60 * 24))
 
-      if (day === 0 || day === 6) {
-        surchargeMultiplier *= (1 + pricing.surcharges.weekend)
-        weekendAmount = Math.round(discountedServices * pricing.surcharges.weekend * 100) / 100
-      }
       if (pricing.surcharges.high_season_months.includes(month)) {
         surchargeMultiplier *= (1 + pricing.surcharges.high_season)
         highSeasonAmount = Math.round(discountedServices * pricing.surcharges.high_season * 100) / 100
@@ -118,12 +114,13 @@ export function useQuoteCalculator() {
       overnightFee,
       packageDiscount,
       packageDiscountRate,
-      surcharges: { weekend: weekendAmount, highSeason: highSeasonAmount, lastMinute: lastMinuteAmount, total: surchargesTotal },
+      surcharges: { highSeason: highSeasonAmount, lastMinute: lastMinuteAmount, total: surchargesTotal },
       subtotalBeforeVat,
       vatAmount,
       total: totalWithVat,
       totalWithVat,
-      distanceKm
+      distanceKm,
+      outOfRange
     }
   }, [eventDetails, location, selectedServices, addons, addonQuantities])
 }

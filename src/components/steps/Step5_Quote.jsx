@@ -113,10 +113,12 @@ export default function Step5_Quote() {
           </div>
           {quote.lineItems.map((li) => {
             const svcDef = services.find((s) => s.id === li.serviceId)
-            const name = lang === 'fi' ? svcDef?.name_fi : svcDef?.name_en
+            const EXTRAS_NAME = { fi: 'Erikoispalvelut', en: 'Special Extras' }
+            const name = (lang === 'fi' ? svcDef?.name_fi : svcDef?.name_en) || EXTRAS_NAME[lang] || EXTRAS_NAME.en
+            const label = li.durationCost > 0 ? `${name} (${li.effectiveHours}h)` : name
             return (
               <div key={li.serviceId} className="mb-3">
-                <QuoteLineItem label={`${name} (${li.effectiveHours}h)`} amount={fmt(li.subtotal)} bold />
+                <QuoteLineItem label={label} amount={fmt(li.subtotal)} bold />
                 {li.basePrice > 0 && <QuoteLineItem label={t('quote.base')} amount={fmt(li.basePrice)} muted indent />}
                 {li.durationCost > 0 && <QuoteLineItem label={t('quote.duration_cost', { hours: li.effectiveHours })} amount={fmt(li.durationCost)} muted indent />}
                 {li.addonsCost > 0 && <QuoteLineItem label={t('quote.addons_cost')} amount={fmt(li.addonsCost)} muted indent />}
@@ -130,6 +132,28 @@ export default function Step5_Quote() {
 
         {quote.packageDiscount < 0 && (
           <QuoteLineItem label={t('quote.package_discount')} amount={fmt(quote.packageDiscount)} green />
+        )}
+
+        {quote.outOfRange && (
+          <div className="flex items-start gap-2 p-3 rounded-xl text-sm"
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171' }}>
+            ⚠️ {lang === 'fi'
+              ? `Sijainti on yli 250 km — palvelu ei ole saatavilla tällä alueella. Ota yhteyttä hinta-arviota varten.`
+              : `Location is over 250 km — service cannot be provided in this area. Please contact us for a custom quote.`}
+          </div>
+        )}
+
+        {!quote.outOfRange && quote.distanceKm !== null && (
+          <div className="flex justify-between text-sm">
+            <span className="text-[var(--color-text-muted)]">
+              {lang === 'fi' ? 'Matka-alue' : 'Travel zone'}
+            </span>
+            <span style={{ color: quote.travelFee > 0 ? 'var(--color-accent)' : 'var(--color-success)' }}>
+              {quote.distanceKm} km — {quote.travelFee > 0
+                ? (lang === 'fi' ? 'Matkakulualue' : 'Chargeable zone')
+                : (lang === 'fi' ? 'Maksuton alue' : 'Free zone')}
+            </span>
+          </div>
         )}
         {quote.travelFee > 0 && <QuoteLineItem label={t('quote.travel_fee')} amount={fmt(quote.travelFee)} />}
         {quote.overnightFee > 0 && <QuoteLineItem label={t('quote.overnight_fee')} amount={fmt(quote.overnightFee)} />}

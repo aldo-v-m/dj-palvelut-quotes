@@ -20,8 +20,7 @@ function getLoader() {
   if (!loaderInstance) {
     loaderInstance = new Loader({
       apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-      version: 'weekly',
-      libraries: ['places', 'geometry']
+      version: 'weekly'
     })
   }
   return loaderInstance
@@ -57,55 +56,54 @@ async function resolveDistance(lat, lng, setLocation) {
 
 export function useDistanceCalc() {
   const sessionTokenRef = useRef(null)
+  const placesLibRef = useRef(null)
   const setLocation = useQuoteStore((s) => s.setLocation)
 
-  const loadMaps = useCallback(async () => {
+  const loadPlaces = useCallback(async () => {
+    if (placesLibRef.current) return placesLibRef.current
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-    if (!apiKey) return false
+    if (!apiKey) return null
     try {
-      await getLoader().load()
-      return true
-    } catch {
-      return false
+      const places = await getLoader().importLibrary('places')
+      placesLibRef.current = places
+      return places
+    } catch (err) {
+      console.error('Failed to load Places library:', err)
+      return null
     }
   }, [])
 
   const getSuggestions = useCallback(async (input) => {
     if (!input || input.length < 2) return []
-    const ok = await loadMaps()
-    if (!ok) return []
+    const places = await loadPlaces()
+    if (!places) return []
     try {
       if (!sessionTokenRef.current) {
-        sessionTokenRef.current = new window.google.maps.places.AutocompleteSessionToken()
+        sessionTokenRef.current = new places.AutocompleteSessionToken()
       }
-      const service = new window.google.maps.places.AutocompleteService()
+      const svc = new places.AutocompleteService()
       const result = await new Promise((resolve) => {
-        service.getPlacePredictions(
+        svc.getPlacePredictions(
           { input, sessionToken: sessionTokenRef.current, componentRestrictions: { country: 'fi' } },
-          (predictions, status) => {
-            resolve(status === 'OK' ? predictions : [])
-          }
+          (predictions, status) => resolve(status === 'OK' ? (predictions || []) : [])
         )
       })
       return result
     } catch {
       return []
     }
-  }, [loadMaps])
+  }, [loadPlaces])
 
   const selectPlace = useCallback(async (placeId, description) => {
-    const ok = await loadMaps()
-    if (!ok) return
+    const places = await loadPlaces()
+    if (!places) return
     try {
       const mapDiv = document.createElement('div')
-      const placesService = new window.google.maps.places.PlacesService(mapDiv)
+      const svc = new places.PlacesService(mapDiv)
       const place = await new Promise((resolve, reject) => {
-        placesService.getDetails(
+        svc.getDetails(
           { placeId, fields: ['geometry', 'formatted_address'], sessionToken: sessionTokenRef.current },
-          (result, status) => {
-            if (status === 'OK') resolve(result)
-            else reject(status)
-          }
+          (result, status) => status === 'OK' ? resolve(result) : reject(status)
         )
       })
       sessionTokenRef.current = null
@@ -116,7 +114,7 @@ export function useDistanceCalc() {
     } catch (err) {
       console.error('Place details failed:', err)
     }
-  }, [loadMaps, setLocation])
+  }, [loadPlaces, setLocation])
 
   return { getSuggestions, selectPlace }
 }
