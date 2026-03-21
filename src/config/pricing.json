@@ -1,6 +1,6 @@
 {
   "currency": "EUR",
-  "vat_rate": 0.24,
+  "vat_rate": 0.135,
   "travel": {
     "free_km": 30,
     "rate_per_km": 1.20,
@@ -11,8 +11,8 @@
     "weekend": 0.20,
     "high_season_months": [6, 7, 8, 12],
     "high_season": 0.15,
-    "last_minute_days": 14,
-    "last_minute": 0.10
+    "last_minute_days": 7,
+    "last_minute": 0.15
   },
   "package_discounts": {
     "two_services": 0.05,
@@ -36,33 +36,33 @@
       "hourly_rate": 40,
       "min_hours": 3,
       "addons": {
-        "subwoofer_upgrade": { "price": 150, "per": "event" },
-        "monitor_speakers": { "price": 80, "per": "unit" },
-        "wireless_mics": { "price": 60, "per": "unit" },
-        "hearing_loop": { "price": 120, "per": "event" }
+        "extra_sub": { "price": 150, "per": "event" },
+        "extra_speakers": { "price": 100, "per": "unit" }
       }
     },
     "lighting": {
-      "base_price": 300,
-      "hourly_rate": 35,
-      "min_hours": 3,
+      "base_price": 0,
+      "hourly_rate": 0,
+      "min_hours": 0,
       "addons": {
-        "moving_heads": { "price": 200, "per": "event" },
-        "gobo_projection": { "price": 150, "per": "event" },
-        "uplighting": { "price": 180, "per": "event" },
-        "led_dance_floor": { "price": 400, "per": "event" }
+        "led_lights": { "price": 100, "per": "event" },
+        "ambient_lighting": { "price": 150, "per": "event" },
+        "smoke_machine": { "price": 50, "per": "event" }
       }
     },
     "special_fx": {
-      "base_price": 250,
-      "hourly_rate": 30,
-      "min_hours": 2,
+      "base_price": 150,
+      "hourly_rate": 0,
+      "min_hours": 0,
+      "addons": {}
+    },
+    "extras": {
+      "base_price": 0,
+      "hourly_rate": 0,
+      "min_hours": 0,
       "addons": {
-        "cold_sparks": { "price": 180, "per": "event" },
-        "co2_jets": { "price": 220, "per": "event" },
-        "smoke_machine": { "price": 80, "per": "event" },
-        "bubble_machine": { "price": 60, "per": "event" },
-        "confetti_cannon": { "price": 90, "per": "shot" }
+        "titis_magic": { "price": 200, "per": "dancer" },
+        "custom_stage": { "price": 2500, "per": "event" }
       }
     }
   }

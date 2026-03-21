@@ -20,7 +20,7 @@
     "1": { "title": "Event Details", "desc": "Tell us about your event" },
     "2": { "title": "Location", "desc": "Where is your event?" },
     "3": { "title": "Services", "desc": "Choose your services" },
-    "4": { "title": "Customise", "desc": "Add extras to your package" },
+    "4": { "title": "Extras", "desc": "Add optional extras to your package" },
     "5": { "title": "Your Quote", "desc": "Review your personalised quote" },
     "6": { "title": "Contact", "desc": "Send us your inquiry" }
   },
@@ -42,6 +42,10 @@
     "guests_label": "Number of Guests",
     "venue_label": "Venue Name",
     "venue_placeholder": "e.g. Helsinki Convention Centre",
+    "time_label": "Event Times",
+    "start_time": "Start Time",
+    "end_time": "End Time",
+    "duration_calculated": "Event duration",
     "types": {
       "wedding": "Wedding",
       "corporate": "Corporate",
@@ -89,24 +93,18 @@
       "requests_app_desc": "Guests submit requests via smartphone"
     },
     "audio": {
-      "subwoofer_upgrade": "Subwoofer Upgrade",
-      "subwoofer_upgrade_desc": "Enhanced bass for larger venues",
-      "monitor_speakers": "Monitor Speakers",
-      "monitor_speakers_desc": "Stage monitor wedges",
-      "wireless_mics": "Wireless Microphones",
-      "wireless_mics_desc": "Handheld or lapel microphones",
-      "hearing_loop": "Hearing Loop",
-      "hearing_loop_desc": "Induction loop for hearing aid users"
+      "extra_sub": "Extra Subwoofer",
+      "extra_sub_desc": "Additional subwoofer for larger venues",
+      "extra_speakers": "Extra Speakers",
+      "extra_speakers_desc": "Additional speakers for bigger rooms"
     },
     "lighting": {
-      "moving_heads": "Moving Heads",
-      "moving_heads_desc": "Dynamic automated spotlights",
-      "gobo_projection": "Gobo Projection",
-      "gobo_projection_desc": "Custom logo or pattern projection",
-      "uplighting": "Uplighting",
-      "uplighting_desc": "Ambient wall and pillar lighting",
-      "led_dance_floor": "LED Dance Floor",
-      "led_dance_floor_desc": "Illuminated dance floor panels"
+      "led_lights": "LED Lights",
+      "led_lights_desc": "Dynamic LED lights & strobes",
+      "ambient_lighting": "Ambient Lighting",
+      "ambient_lighting_desc": "Atmospheric wall & pillar uplighting",
+      "smoke_machine": "Smoke Machine",
+      "smoke_machine_desc": "Atmospheric haze or fog effect"
     },
     "special_fx": {
       "cold_sparks": "Cold Sparks",
@@ -139,7 +137,7 @@
     "travel_fee": "Travel Fee",
     "overnight_fee": "Overnight Allowance",
     "subtotal_ex_vat": "Subtotal (ex VAT)",
-    "vat": "VAT (24%)",
+    "vat": "VAT (13.5%)",
     "total": "Total",
     "incl_vat": "inc. VAT",
     "excl_vat": "excl. VAT",
@@ -165,6 +163,7 @@
     "success_title": "Inquiry Sent!",
     "success_desc": "We'll be in touch within 24 hours. Your quote reference is {{quoteId}}.",
     "whatsapp_cta": "Prefer to chat?",
+    "call_cta": "Prefer to call?",
     "validation": {
       "name_min": "Name must be at least 2 characters",
       "email_invalid": "Please enter a valid email address",

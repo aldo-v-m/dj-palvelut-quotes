@@ -20,7 +20,7 @@
     "1": { "title": "Tapahtuman tiedot", "desc": "Kerro tapahtumastasi" },
     "2": { "title": "Sijainti", "desc": "Miss\u00e4 tapahtuma j\u00e4rjestet\u00e4\u00e4n?" },
     "3": { "title": "Palvelut", "desc": "Valitse palvelut" },
-    "4": { "title": "Mukauttaminen", "desc": "Lis\u00e4\u00e4 lis\u00e4osat pakettiin" },
+    "4": { "title": "Lisäpalvelut", "desc": "Lisää valinnaisia palveluita pakettiin" },
     "5": { "title": "Tarjouksesi", "desc": "Tarkista henkil\u00f6kohtainen tarjouksesi" },
     "6": { "title": "Yhteystiedot", "desc": "L\u00e4het\u00e4 kyselysi" }
   },
@@ -42,6 +42,10 @@
     "guests_label": "Vieraiden m\u00e4\u00e4r\u00e4",
     "venue_label": "Tapahtumapaikan nimi",
     "venue_placeholder": "esim. Finlandia-talo",
+    "time_label": "Tapahtuman ajat",
+    "start_time": "Aloitusaika",
+    "end_time": "Lopetusaika",
+    "duration_calculated": "Tapahtuman kesto",
     "types": {
       "wedding": "H\u00e4\u00e4t",
       "corporate": "Yritystapahtuma",
@@ -89,24 +93,18 @@
       "requests_app_desc": "Vieraat l\u00e4hett\u00e4v\u00e4t toiveita \u00e4lypuhelimella"
     },
     "audio": {
-      "subwoofer_upgrade": "Subwoofer-p\u00e4ivitys",
-      "subwoofer_upgrade_desc": "Tehostettu basso suurempiin tiloihin",
-      "monitor_speakers": "Monitorikaiuttimet",
-      "monitor_speakers_desc": "Lavakaiuttimet esiintyji\u00e4 varten",
-      "wireless_mics": "Langattomat mikrofonit",
-      "wireless_mics_desc": "K\u00e4simikrofonit tai nappimikrofonit",
-      "hearing_loop": "Induktiosilmukka",
-      "hearing_loop_desc": "Induktiosilmukka kuulolaitteiden k\u00e4ytt\u00e4jille"
+      "extra_sub": "Lisä-subwoofer",
+      "extra_sub_desc": "Lisätehokas bassonvahvistin",
+      "extra_speakers": "Lisäkaiuttimet",
+      "extra_speakers_desc": "Lisäkaiuttimet suurempaan tilaan"
     },
     "lighting": {
-      "moving_heads": "Moving head -valot",
-      "moving_heads_desc": "Dynaamiset automatisoidut valonheittimet",
-      "gobo_projection": "Goboprojektion",
-      "gobo_projection_desc": "Mukautettu logo- tai kuvioprojektion",
-      "uplighting": "Tunnelmavalaistus",
-      "uplighting_desc": "Tunnelmallinen sein\u00e4- ja pylv\u00e4svalaistus",
-      "led_dance_floor": "LED-tanssilattia",
-      "led_dance_floor_desc": "Valaisevat tanssilattiapaneelit"
+      "led_lights": "LED-valot",
+      "led_lights_desc": "Dynaamiset LED-valot ja strobot",
+      "ambient_lighting": "Tunnelmavalaistus",
+      "ambient_lighting_desc": "Tunnelmallinen seinä- ja pylväsvalaistus",
+      "smoke_machine": "Savukone",
+      "smoke_machine_desc": "Tunnelmallinen savu tai haze"
     },
     "special_fx": {
       "cold_sparks": "Kylm\u00e4t kipinn\u00e4t",
@@ -139,7 +137,7 @@
     "travel_fee": "Matkakulut",
     "overnight_fee": "Y\u00f6pymiskorvaus",
     "subtotal_ex_vat": "V\u00e4lisumma (ALV 0%)",
-    "vat": "ALV (24%)",
+    "vat": "ALV (13,5%)",
     "total": "Yhteens\u00e4",
     "incl_vat": "sis. ALV",
     "excl_vat": "ALV 0%",
@@ -165,6 +163,7 @@
     "success_title": "Kysely l\u00e4hetetty!",
     "success_desc": "Olemme yhteydess\u00e4 24 tunnin kuluessa. Tarjouksesi viite on {{quoteId}}.",
     "whatsapp_cta": "Haluatko jutella?",
+    "call_cta": "Haluatko soittaa?",
     "validation": {
       "name_min": "Nimen on oltava v\u00e4hint\u00e4\u00e4n 2 merkki\u00e4",
       "email_invalid": "Sy\u00f6t\u00e4 kelvollinen s\u00e4hk\u00f6postiosoite",

@@ -18,7 +18,7 @@ export default function ServiceCard({ service, selected, onToggle }) {
   const lang = i18n.language
   const Icon = ICONS[service.icon] || Music
   const colors = COLOR_MAP[service.color] || COLOR_MAP.purple
-  const basePrice = pricing.services[service.id]?.base_price || 0
+  const basePrice = service.from_price || pricing.services[service.id]?.base_price || 0
 
   return (
     <motion.button

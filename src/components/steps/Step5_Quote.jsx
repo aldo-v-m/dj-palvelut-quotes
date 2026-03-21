@@ -34,7 +34,7 @@ export default function Step5_Quote() {
   }
 
   const fmt = (amount) => {
-    const val = store.showVatIncluded ? amount : amount / 1.24
+    const val = store.showVatIncluded ? amount : amount / (1 + 0.135)
     return `€${val.toFixed(2)}`
   }
 
@@ -127,17 +127,6 @@ export default function Step5_Quote() {
 
         <div className="border-t border-[var(--color-border)]" />
 
-        {/* Surcharges */}
-        {(quote.surcharges.weekend > 0 || quote.surcharges.highSeason > 0 || quote.surcharges.lastMinute > 0) && (
-          <div>
-            <div className="text-xs font-medium text-[var(--color-text-muted)] mb-1 uppercase tracking-wider">
-              {t('quote.surcharges')}
-            </div>
-            {quote.surcharges.weekend > 0 && <QuoteLineItem label={t('quote.weekend_surcharge')} amount={`+${fmt(quote.surcharges.weekend)}`} />}
-            {quote.surcharges.highSeason > 0 && <QuoteLineItem label={t('quote.high_season_surcharge')} amount={`+${fmt(quote.surcharges.highSeason)}`} />}
-            {quote.surcharges.lastMinute > 0 && <QuoteLineItem label={t('quote.last_minute_surcharge')} amount={`+${fmt(quote.surcharges.lastMinute)}`} />}
-          </div>
-        )}
 
         {quote.packageDiscount < 0 && (
           <QuoteLineItem label={t('quote.package_discount')} amount={fmt(quote.packageDiscount)} green />

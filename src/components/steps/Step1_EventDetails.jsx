@@ -1,11 +1,10 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Heart, Briefcase, PartyPopper, Music, HelpCircle, Plus, Minus } from 'lucide-react'
+import { Heart, Briefcase, PartyPopper, Music, HelpCircle, Plus, Minus, Clock } from 'lucide-react'
 import useQuoteStore from '../../store/quoteStore'
 import { useAIRecommendation } from '../../hooks/useAIRecommendation'
 import DatePicker from '../ui/DatePicker'
-import DurationSlider from '../ui/DurationSlider'
 
 const EVENT_TYPES = [
   { id: 'wedding', Icon: Heart, color: '#f43f5e' },
@@ -15,16 +14,41 @@ const EVENT_TYPES = [
   { id: 'other', Icon: HelpCircle, color: '#6ee7b7' }
 ]
 
+function calcHours(start, end) {
+  if (!start || !end) return 0
+  const [sh, sm] = start.split(':').map(Number)
+  const [eh, em] = end.split(':').map(Number)
+  let startMins = sh * 60 + sm
+  let endMins = eh * 60 + em
+  if (endMins <= startMins) endMins += 24 * 60
+  return Math.round((endMins - startMins) / 60 * 10) / 10
+}
+
 export default function Step1_EventDetails() {
   const { t } = useTranslation()
   const { eventDetails, setEventDetails, nextStep } = useQuoteStore()
   const { fetchRecommendation } = useAIRecommendation()
 
+  const hours = calcHours(eventDetails.startTime, eventDetails.endTime) || eventDetails.durationHours
+
+  const handleTimeChange = (field, value) => {
+    const newDetails = { ...eventDetails, [field]: value }
+    const calculated = calcHours(
+      field === 'startTime' ? value : newDetails.startTime,
+      field === 'endTime' ? value : newDetails.endTime
+    )
+    if (calculated > 0) {
+      setEventDetails({ [field]: value, durationHours: calculated })
+    } else {
+      setEventDetails({ [field]: value })
+    }
+  }
+
   const handleNext = () => {
     fetchRecommendation({
       eventType: eventDetails.eventType,
       guestCount: eventDetails.guestCount,
-      durationHours: eventDetails.durationHours
+      durationHours: hours
     })
     nextStep()
   }
@@ -40,6 +64,7 @@ export default function Step1_EventDetails() {
         <p className="text-sm text-[var(--color-text-muted)]">{t('steps.1.desc')}</p>
       </div>
 
+      {/* Event type */}
       <div className="space-y-3">
         <label className="text-sm font-medium text-[var(--color-text-muted)]">
           {t('event.type_label')}
@@ -68,18 +93,52 @@ export default function Step1_EventDetails() {
         </div>
       </div>
 
+      {/* Date */}
       <DatePicker
         label={t('event.date_label')}
         value={eventDetails.date || ''}
         onChange={(val) => setEventDetails({ date: val })}
       />
 
-      <DurationSlider
-        label={t('event.duration_label')}
-        value={eventDetails.durationHours}
-        onChange={(val) => setEventDetails({ durationHours: val })}
-      />
+      {/* Start & End time */}
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-[var(--color-text-muted)] flex items-center gap-2">
+          <Clock size={14} />
+          {t('event.time_label')}
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { field: 'startTime', label: t('event.start_time'), value: eventDetails.startTime },
+            { field: 'endTime', label: t('event.end_time'), value: eventDetails.endTime }
+          ].map(({ field, label, value }) => (
+            <div key={field} className="space-y-1">
+              <span className="text-xs text-[var(--color-text-muted)]">{label}</span>
+              <input
+                type="time"
+                value={value}
+                onChange={(e) => handleTimeChange(field, e.target.value)}
+                className="w-full px-4 py-3 rounded-xl text-sm text-[var(--color-text)]"
+                style={{
+                  backgroundColor: 'var(--color-surface)',
+                  border: `1px solid ${value ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  colorScheme: 'dark'
+                }}
+              />
+            </div>
+          ))}
+        </div>
+        {hours > 0 && (
+          <div
+            className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm"
+            style={{ backgroundColor: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)' }}
+          >
+            <span className="text-[var(--color-text-muted)]">{t('event.duration_calculated')}</span>
+            <span className="font-semibold text-[var(--color-accent)]">{hours}h</span>
+          </div>
+        )}
+      </div>
 
+      {/* Guest count */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-[var(--color-text-muted)]">
           {t('event.guests_label')}
@@ -109,6 +168,7 @@ export default function Step1_EventDetails() {
         </div>
       </div>
 
+      {/* Venue name */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-[var(--color-text-muted)]">
           {t('event.venue_label')} <span className="text-xs">({t('common.optional')})</span>
@@ -127,7 +187,7 @@ export default function Step1_EventDetails() {
         onClick={handleNext}
         disabled={!isValid}
         className="w-full py-4 rounded-xl font-semibold text-sm transition-all disabled:opacity-40"
-        style={{ backgroundColor: isValid ? 'var(--color-accent)' : 'var(--color-border)', color: '#0f0f11' }}
+        style={{ backgroundColor: isValid ? 'var(--color-accent)' : 'var(--color-border)', color: '#0a130c' }}
       >
         {t('common.next')}
       </button>

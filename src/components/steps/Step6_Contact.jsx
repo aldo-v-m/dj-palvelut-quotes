@@ -137,6 +137,19 @@ export default function Step6_Contact() {
             {t('common.whatsapp')}
           </a>
         </div>
+        <div
+          className="w-full max-w-xs p-4 rounded-xl"
+          style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+        >
+          <p className="text-sm text-[var(--color-text-muted)] mb-3">{t('contact.call_cta')}</p>
+          <a
+            href={`tel:${import.meta.env.VITE_COMPANY_PHONE || '+358458844121'}`}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium text-sm"
+            style={{ backgroundColor: 'var(--color-accent)', color: '#0a130c' }}
+          >
+            📞 Benjamin — {import.meta.env.VITE_COMPANY_PHONE || '+358 45 884 4121'}
+          </a>
+        </div>
       </div>
     )
   }

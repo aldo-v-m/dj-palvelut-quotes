@@ -7,6 +7,8 @@ const useQuoteStore = create((set, get) => ({
     date: null,
     eventType: '',
     durationHours: 4,
+    startTime: '',
+    endTime: '',
     guestCount: 100,
     venueName: ''
   },

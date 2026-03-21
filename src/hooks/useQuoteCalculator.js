@@ -19,13 +19,23 @@ export function useQuoteCalculator() {
     const { date, durationHours } = eventDetails
     const hours = durationHours || 4
 
-    const lineItems = selectedServices.map((serviceId) => {
+    // All service IDs to process: selected services + extras (always if has addons)
+    const allServiceIds = [...new Set([
+      ...selectedServices,
+      ...(Object.keys(addons.extras || {}).length > 0 || (addons['extras'] || []).length > 0 ? ['extras'] : [])
+    ])]
+
+    const lineItems = allServiceIds.map((serviceId) => {
       const svcPricing = pricing.services[serviceId]
       if (!svcPricing) return null
 
       const basePrice = svcPricing.base_price
-      const effectiveHours = Math.max(hours, svcPricing.min_hours)
-      const durationCost = Math.max(0, effectiveHours - svcPricing.min_hours) * svcPricing.hourly_rate
+      const effectiveHours = svcPricing.hourly_rate > 0
+        ? Math.max(hours, svcPricing.min_hours)
+        : 0
+      const durationCost = svcPricing.hourly_rate > 0
+        ? Math.max(0, effectiveHours - svcPricing.min_hours) * svcPricing.hourly_rate
+        : 0
 
       const serviceAddons = addons[serviceId] || []
       let addonsCost = 0
@@ -39,8 +49,9 @@ export function useQuoteCalculator() {
       }).filter(Boolean)
 
       const subtotal = basePrice + durationCost + addonsCost
+      if (subtotal === 0) return null
 
-      return { serviceId, basePrice, durationCost, addonsCost, addonLines, subtotal, effectiveHours }
+      return { serviceId, basePrice, durationCost, addonsCost, addonLines, subtotal, effectiveHours: effectiveHours || hours }
     }).filter(Boolean)
 
     const servicesSubtotal = lineItems.reduce((sum, li) => sum + li.subtotal, 0)
@@ -59,7 +70,7 @@ export function useQuoteCalculator() {
       ? pricing.travel.overnight_allowance
       : 0
 
-    // Package discount
+    // Package discount (on selected services only, not extras)
     const count = selectedServices.length
     let packageDiscountRate = 0
     if (count >= 4) packageDiscountRate = pricing.package_discounts.four_services
@@ -69,7 +80,7 @@ export function useQuoteCalculator() {
 
     const discountedServices = servicesSubtotal + packageDiscount
 
-    // Surcharges (multiplicative)
+    // Surcharges (hidden from customer, applied to total silently)
     let surchargeMultiplier = 1
     let weekendAmount = 0
     let highSeasonAmount = 0

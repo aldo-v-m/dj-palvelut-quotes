@@ -1,22 +1,97 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { Check, Users, Layers } from 'lucide-react'
+import { motion } from 'framer-motion'
 import useQuoteStore from '../../store/quoteStore'
-import AddonCheckbox from '../ui/AddonCheckbox'
 import pricing from '../../config/pricing.json'
-import services from '../../config/services.json'
 
-const ACCORDION_COLORS = { dj: '#a855f7', audio: '#3b82f6', lighting: '#f59e0b', special_fx: '#f97316' }
-const QUANTITY_ADDONS = ['wireless_mics', 'monitor_speakers', 'confetti_cannon']
+const LIGHTING_ADDONS = [
+  { id: 'led_lights', emoji: '💡', price: 100 },
+  { id: 'ambient_lighting', emoji: '🌅', price: 150 },
+  { id: 'smoke_machine', emoji: '💨', price: 50 }
+]
+const AUDIO_ADDONS = [
+  { id: 'extra_sub', emoji: '🔊', price: 150 },
+  { id: 'extra_speakers', emoji: '📢', price: 100 }
+]
+const DJ_ADDONS = [
+  { id: 'mc_hosting', emoji: '🎤', price: 200 },
+  { id: 'vinyl_setup', emoji: '🎶', price: 100 },
+  { id: 'extra_dj', emoji: '👤', price: 350 },
+  { id: 'requests_app', emoji: '📱', price: 50 }
+]
+
+function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked, onToggle, quantity, onQtyChange, showQty }) {
+  return (
+    <motion.div
+      whileTap={{ scale: 0.98 }}
+      onClick={onToggle}
+      className="flex items-start gap-3 p-4 rounded-xl cursor-pointer transition-all"
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        border: `1px solid ${checked ? 'var(--color-accent)' : 'var(--color-border)'}`
+      }}
+    >
+      <div
+        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 text-base mt-0.5"
+        style={{ backgroundColor: checked ? 'rgba(212,168,67,0.15)' : 'rgba(255,255,255,0.05)' }}
+      >
+        {emoji}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm font-medium text-[var(--color-text)]">{label}</span>
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-sm font-semibold text-[var(--color-accent)]">€{price}</span>
+            <div
+              className="w-5 h-5 rounded flex items-center justify-center shrink-0"
+              style={{ backgroundColor: checked ? 'var(--color-accent)' : 'var(--color-border)' }}
+            >
+              {checked && <Check size={12} style={{ color: '#0a130c' }} />}
+            </div>
+          </div>
+        </div>
+        {desc && <p className="text-xs text-[var(--color-text-muted)] mt-0.5">{desc}</p>}
+        {checked && showQty && (
+          <div className="flex items-center gap-2 mt-2" onClick={(e) => e.stopPropagation()}>
+            <span className="text-xs text-[var(--color-text-muted)]">Qty:</span>
+            <button
+              className="w-6 h-6 rounded text-xs border border-[var(--color-border)] text-[var(--color-text-muted)]"
+              onClick={() => onQtyChange(Math.max(1, quantity - 1))}
+            >-</button>
+            <span className="text-sm font-semibold text-[var(--color-text)] w-4 text-center">{quantity}</span>
+            <button
+              className="w-6 h-6 rounded text-xs border border-[var(--color-border)] text-[var(--color-text-muted)]"
+              onClick={() => onQtyChange(quantity + 1)}
+            >+</button>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  )
+}
 
 export default function Step4_Customization() {
   const { t, i18n } = useTranslation()
   const { selectedServices, addons, addonQuantities, toggleAddon, setAddonQuantity, nextStep, prevStep } = useQuoteStore()
-  const [open, setOpen] = useState(selectedServices[0] || null)
   const lang = i18n.language
 
+  const isChecked = (svcId, addonId) => (addons[svcId] || []).includes(addonId)
+  const qty = (svcId, addonId) => addonQuantities[`${svcId}_${addonId}`] || 1
+
+  const hasLighting = selectedServices.includes('lighting')
+  const hasAudio = selectedServices.includes('audio')
+  const hasDJ = selectedServices.includes('dj')
+
+  const Section = ({ title, children }) => (
+    <div className="space-y-2">
+      <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wider px-1">{title}</h3>
+      <div className="space-y-2">{children}</div>
+    </div>
+  )
+
   return (
-    <div className="px-4 py-6 space-y-4 pb-24">
+    <div className="px-4 py-6 space-y-6 pb-24">
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">
           {t('steps.4.title')}
@@ -24,71 +99,97 @@ export default function Step4_Customization() {
         <p className="text-sm text-[var(--color-text-muted)]">{t('steps.4.desc')}</p>
       </div>
 
-      {selectedServices.map((serviceId) => {
-        const svcDef = services.find((s) => s.id === serviceId)
-        const svcPricing = pricing.services[serviceId]
-        const color = ACCORDION_COLORS[serviceId] || '#e8c97e'
-        const isOpen = open === serviceId
-        const svcAddons = Object.keys(svcPricing?.addons || {})
+      {hasLighting && (
+        <Section title={lang === 'fi' ? 'Valaistus' : 'Lighting Options'}>
+          {LIGHTING_ADDONS.map(({ id, emoji, price }) => (
+            <AddonCard
+              key={id}
+              serviceId="lighting"
+              addonId={id}
+              emoji={emoji}
+              price={price}
+              label={t(`addons.lighting.${id}`)}
+              desc={t(`addons.lighting.${id}_desc`)}
+              checked={isChecked('lighting', id)}
+              onToggle={() => toggleAddon('lighting', id)}
+              quantity={qty('lighting', id)}
+              onQtyChange={(q) => setAddonQuantity('lighting', id, q)}
+              showQty={false}
+            />
+          ))}
+        </Section>
+      )}
 
-        return (
-          <div
-            key={serviceId}
-            className="rounded-2xl overflow-hidden"
-            style={{
-              border: `1px solid ${isOpen ? color + '66' : 'var(--color-border)'}`,
-              backgroundColor: 'var(--color-surface)'
-            }}
-          >
-            <button
-              className="w-full flex items-center justify-between p-4"
-              onClick={() => setOpen(isOpen ? null : serviceId)}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-                <span className="font-semibold text-[var(--color-text)]">
-                  {lang === 'fi' ? svcDef?.name_fi : svcDef?.name_en}
-                </span>
-                {(addons[serviceId] || []).length > 0 && (
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: `${color}22`, color }}>
-                    +{(addons[serviceId] || []).length}
-                  </span>
-                )}
-              </div>
-              {isOpen
-                ? <ChevronUp size={16} className="text-[var(--color-text-muted)]" />
-                : <ChevronDown size={16} className="text-[var(--color-text-muted)]" />}
-            </button>
+      {hasAudio && (
+        <Section title={lang === 'fi' ? 'Äänentoisto-lisät' : 'Audio Extras'}>
+          {AUDIO_ADDONS.map(({ id, emoji, price }) => (
+            <AddonCard
+              key={id}
+              serviceId="audio"
+              addonId={id}
+              emoji={emoji}
+              price={price}
+              label={t(`addons.audio.${id}`)}
+              desc={t(`addons.audio.${id}_desc`)}
+              checked={isChecked('audio', id)}
+              onToggle={() => toggleAddon('audio', id)}
+              quantity={qty('audio', id)}
+              onQtyChange={(q) => setAddonQuantity('audio', id, q)}
+              showQty={id === 'extra_speakers'}
+            />
+          ))}
+        </Section>
+      )}
 
-            {isOpen && (
-              <div className="px-4 pb-4 space-y-1 border-t border-[var(--color-border)]">
-                <div className="pt-3" />
-                {svcAddons.map((addonId) => {
-                  const def = svcPricing.addons[addonId]
-                  const checked = (addons[serviceId] || []).includes(addonId)
-                  const qty = addonQuantities[`${serviceId}_${addonId}`] || 1
-                  const showQty = QUANTITY_ADDONS.includes(addonId)
-                  return (
-                    <AddonCheckbox
-                      key={addonId}
-                      addonId={addonId}
-                      label={t(`addons.${serviceId}.${addonId}`)}
-                      description={t(`addons.${serviceId}.${addonId}_desc`)}
-                      price={def.price}
-                      per={def.per}
-                      checked={checked}
-                      onToggle={() => toggleAddon(serviceId, addonId)}
-                      quantity={qty}
-                      onQuantityChange={(q) => setAddonQuantity(serviceId, addonId, q)}
-                      showQuantity={showQty}
-                    />
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        )
-      })}
+      {hasDJ && (
+        <Section title={lang === 'fi' ? 'DJ-lisät' : 'DJ Extras'}>
+          {DJ_ADDONS.map(({ id, emoji, price }) => (
+            <AddonCard
+              key={id}
+              serviceId="dj"
+              addonId={id}
+              emoji={emoji}
+              price={price}
+              label={t(`addons.dj.${id}`)}
+              desc={t(`addons.dj.${id}_desc`)}
+              checked={isChecked('dj', id)}
+              onToggle={() => toggleAddon('dj', id)}
+              quantity={qty('dj', id)}
+              onQtyChange={(q) => setAddonQuantity('dj', id, q)}
+              showQty={false}
+            />
+          ))}
+        </Section>
+      )}
+
+      <Section title={lang === 'fi' ? 'Erikoispalvelut' : 'Special Extras'}>
+        <AddonCard
+          serviceId="extras"
+          addonId="titis_magic"
+          emoji="💃"
+          price={200}
+          label={lang === 'fi' ? 'Titis Magic' : 'Titis Magic'}
+          desc={lang === 'fi' ? '€200 per tanssija' : '€200 per dancer'}
+          checked={isChecked('extras', 'titis_magic')}
+          onToggle={() => toggleAddon('extras', 'titis_magic')}
+          quantity={qty('extras', 'titis_magic')}
+          onQtyChange={(q) => setAddonQuantity('extras', 'titis_magic', q)}
+          showQty={true}
+        />
+        <AddonCard
+          serviceId="extras"
+          addonId="custom_stage"
+          emoji="🎭"
+          price={2500}
+          label={lang === 'fi' ? 'Custom Stage Design' : 'Custom Stage Design'}
+          desc={lang === 'fi' ? 'Alkaen €2500 — LED-näytöt, moving heads, savukoneet, strobot' : 'From €2500 — LED screens, moving heads, smoke machines, strobes'}
+          checked={isChecked('extras', 'custom_stage')}
+          onToggle={() => toggleAddon('extras', 'custom_stage')}
+          quantity={qty('extras', 'custom_stage')}
+          onQtyChange={(q) => setAddonQuantity('extras', 'custom_stage', q)}
+          showQty={false}
+        />
+      </Section>
 
       <div className="flex gap-3">
         <button
@@ -100,7 +201,7 @@ export default function Step4_Customization() {
         <button
           onClick={nextStep}
           className="flex-[2] py-4 rounded-xl font-semibold text-sm"
-          style={{ backgroundColor: 'var(--color-accent)', color: '#0f0f11' }}
+          style={{ backgroundColor: 'var(--color-accent)', color: '#0a130c' }}
         >
           {t('common.next')}
         </button>
