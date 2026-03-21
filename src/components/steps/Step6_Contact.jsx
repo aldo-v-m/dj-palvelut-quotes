@@ -86,7 +86,11 @@ export default function Step6_Contact() {
       const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_ytzdmr4'
       const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       if (serviceId && templateId && publicKey) {
-        await emailjs.send(serviceId, templateId, templateParams, publicKey)
+        try {
+          await emailjs.send(serviceId, templateId, templateParams, publicKey)
+        } catch (emailErr) {
+          console.error('EmailJS error:', emailErr)
+        }
       }
       await saveQuoteToAirtable(airtableRecord)
       store.setSubmitted(true)
