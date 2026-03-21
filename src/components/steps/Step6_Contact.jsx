@@ -83,7 +83,7 @@ export default function Step6_Contact() {
 
     try {
       const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_ytzdmr4'
       const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       if (serviceId && templateId && publicKey) {
         await emailjs.send(serviceId, templateId, templateParams, publicKey)

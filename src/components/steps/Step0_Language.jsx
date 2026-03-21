@@ -10,9 +10,9 @@ export default function Step0_Language() {
   const [detected, setDetected] = useState(null)
 
   useEffect(() => {
-    const lang = navigator.language?.startsWith('fi') ? 'fi' : 'en'
+    const lang = navigator.language?.startsWith('en') ? 'en' : 'fi'
     setDetected(lang)
-    let count = 2
+    let count = 30
     setCountdown(count)
     const interval = setInterval(() => {
       count--

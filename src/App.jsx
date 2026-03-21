@@ -57,10 +57,16 @@ export default function App() {
 
   // Auto-resize for Squarespace iframe embed
   useEffect(() => {
-    const observer = new ResizeObserver(() => {
-      window.parent?.postMessage({ type: 'resize', height: document.body.scrollHeight }, '*')
-    })
-    observer.observe(document.body)
+    let lastHeight = 0
+    const sendHeight = () => {
+      const height = document.getElementById('root')?.offsetHeight || document.documentElement.scrollHeight
+      if (height !== lastHeight) {
+        lastHeight = height
+        window.parent?.postMessage({ type: 'resize', height }, '*')
+      }
+    }
+    const observer = new ResizeObserver(sendHeight)
+    observer.observe(document.getElementById('root') || document.body)
     return () => observer.disconnect()
   }, [])
 
