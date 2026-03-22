@@ -8,6 +8,7 @@ import { MessageCircle, CheckCircle } from 'lucide-react'
 import useQuoteStore from '../../store/quoteStore'
 import { useQuoteCalculator } from '../../hooks/useQuoteCalculator'
 import { saveQuoteToAirtable } from '../../utils/airtable'
+import { trackLeadSubmitted } from '../../utils/analytics'
 
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -81,6 +82,15 @@ export default function Step6_Contact() {
       SubmittedAt: new Date().toISOString()
     }
 
+    const sendWhatsApp = async () => {
+      const phone = import.meta.env.VITE_CALLMEBOT_PHONE
+      const apikey = import.meta.env.VITE_CALLMEBOT_APIKEY
+      if (!phone || !apikey) return
+      const msg = `New lead: ${data.name} | ${data.email} | ${store.eventDetails.eventType} | ${store.eventDetails.date} | Quote: €${quote.totalWithVat.toFixed(2)} | ID: ${store.quoteId}`
+      const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(msg)}&apikey=${apikey}`
+      try { await fetch(url) } catch { /* non-blocking */ }
+    }
+
     try {
       const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
       const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_ytzdmr4'
@@ -92,7 +102,15 @@ export default function Step6_Contact() {
           console.error('EmailJS error:', emailErr)
         }
       }
+      // Fire tracking immediately — before Airtable, so it always runs
+      trackLeadSubmitted({
+        total: quote.totalWithVat,
+        services: store.selectedServices,
+        eventType: store.eventDetails.eventType,
+        quoteId: store.quoteId
+      })
       await saveQuoteToAirtable(airtableRecord)
+      sendWhatsApp()
       store.setSubmitted(true)
       setSuccess(true)
     } catch (err) {
@@ -181,7 +199,7 @@ export default function Step6_Contact() {
   )
 
   return (
-    <div className="px-4 py-6 space-y-5 pb-24">
+    <div className="px-3 py-5 space-y-4 pb-24">
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">
           {t('steps.6.title')}

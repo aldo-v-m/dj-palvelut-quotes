@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Contact Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f5f5f5; font-family: sans-serif; padding: 20px; }
+    h2 { margin-bottom: 12px; font-size: 14px; color: #666; }
+    iframe {
+      width: 100%;
+      max-width: 500px;
+      border: none;
+      display: block;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <h2>Quick Contact Widget Preview</h2>
+  <iframe id="quick-widget" src="http://localhost:5173/#quick" scrolling="no"></iframe>
+  <script>
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'resize') {
+        document.getElementById('quick-widget').style.height = e.data.height + 'px';
+      }
+    });
+  </script>
+</body>
+</html>

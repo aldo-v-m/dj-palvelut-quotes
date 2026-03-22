@@ -21,7 +21,7 @@ function calcHours(start, end) {
   let startMins = sh * 60 + sm
   let endMins = eh * 60 + em
   if (endMins <= startMins) endMins += 24 * 60
-  return Math.round((endMins - startMins) / 60 * 10) / 10
+  return Math.round((endMins - startMins) / 60 * 4) / 4  // round to nearest 0.25h
 }
 
 export default function Step1_EventDetails() {
@@ -56,7 +56,7 @@ export default function Step1_EventDetails() {
   const isValid = eventDetails.eventType && eventDetails.date
 
   return (
-    <div className="px-4 py-6 space-y-7 pb-24">
+    <div className="px-3 py-5 space-y-5 pb-24">
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">
           {t('steps.1.title')}
@@ -146,16 +146,23 @@ export default function Step1_EventDetails() {
         <div className="flex items-center gap-3">
           <button
             className="w-10 h-10 rounded-xl border border-[var(--color-border)] flex items-center justify-center hover:border-[var(--color-accent)] text-[var(--color-text-muted)]"
-            onClick={() => setEventDetails({ guestCount: Math.max(10, eventDetails.guestCount - 10) })}
+            onClick={() => setEventDetails({ guestCount: Math.max(1, eventDetails.guestCount - 10) })}
           >
             <Minus size={16} />
           </button>
           <input
             type="number"
-            min={10}
+            min={1}
             max={2000}
             value={eventDetails.guestCount}
-            onChange={(e) => setEventDetails({ guestCount: Math.max(10, Math.min(2000, parseInt(e.target.value) || 10)) })}
+            onChange={(e) => {
+              const val = parseInt(e.target.value)
+              if (!isNaN(val) && val > 0) setEventDetails({ guestCount: Math.min(2000, val) })
+            }}
+            onBlur={(e) => {
+              const val = parseInt(e.target.value)
+              if (isNaN(val) || val < 1) setEventDetails({ guestCount: 1 })
+            }}
             className="flex-1 px-4 py-3 rounded-xl text-center text-[var(--color-text)] font-semibold"
             style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
           />

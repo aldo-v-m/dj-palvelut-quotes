@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #0a130c;
-  --color-surface: #111f14;
-  --color-border: #1e3323;
-  --color-accent: #d4a843;
-  --color-accent-2: #8fbe8f;
-  --color-text: #e8f0e4;
-  --color-text-muted: #6b8f6e;
+  --color-bg: #1a2e1e;
+  --color-surface: #233828;
+  --color-border: #375c40;
+  --color-accent: #e8b84b;
+  --color-accent-2: #a8d4a8;
+  --color-text: #f0f7ed;
+  --color-text-muted: #8db891;
   --color-success: #6ee7b7;
 }
 
@@ -31,4 +31,23 @@ h1, h2, h3 {
 
 input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1) opacity(0.4);
+}
+
+/* Ensure embed fills container cleanly */
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth tap highlighting on mobile */
+button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
 }

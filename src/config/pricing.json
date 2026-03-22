@@ -1,15 +1,13 @@
 {
   "currency": "EUR",
-  "vat_rate": 0.135,
+  "vat_rate": 0,
   "travel": {
-    "free_km": 40,
+    "free_km": 30,
     "rate_per_km_one_way": 0.46,
-    "out_of_range_km": 250,
-    "overnight_threshold_km": 150,
-    "overnight_allowance": 120
+    "out_of_range_km": 250
   },
   "surcharges": {
-    "weekend": 0.20,
+    "weekend": 0.0,
     "high_season_months": [6, 7, 8, 12],
     "high_season": 0.15,
     "last_minute_days": 7,
@@ -18,35 +16,29 @@
   "package_discounts": {
     "two_services": 0.05,
     "three_services": 0.10,
-    "four_services": 0.18
+    "four_services": 0.15
   },
   "services": {
     "dj": {
-      "base_price": 500,
-      "hourly_rate": 90,
-      "min_hours": 3,
-      "addons": {
-        "mc_hosting": { "price": 200, "per": "event" },
-        "vinyl_setup": { "price": 100, "per": "event" },
-        "extra_dj": { "price": 350, "per": "event" },
-        "requests_app": { "price": 50, "per": "event" }
-      }
+      "base_price": 450,
+      "hourly_rate": 50,
+      "min_hours": 5,
+      "addons": {}
     },
     "audio": {
-      "base_price": 350,
-      "hourly_rate": 40,
-      "min_hours": 3,
-      "addons": {
-        "extra_sub": { "price": 150, "per": "event" },
-        "extra_speakers": { "price": 100, "per": "unit" }
-      }
-    },
-    "lighting": {
-      "base_price": 0,
+      "base_price": 200,
       "hourly_rate": 0,
       "min_hours": 0,
       "addons": {
-        "led_lights": { "price": 100, "per": "event" },
+        "extra_sub": { "price": 100, "per": "unit" },
+        "extra_speakers": { "price": 75, "per": "unit" }
+      }
+    },
+    "lighting": {
+      "base_price": 100,
+      "hourly_rate": 0,
+      "min_hours": 0,
+      "addons": {
         "ambient_lighting": { "price": 150, "per": "event" },
         "smoke_machine": { "price": 50, "per": "event" }
       }
@@ -62,7 +54,7 @@
       "hourly_rate": 0,
       "min_hours": 0,
       "addons": {
-        "titis_magic": { "price": 200, "per": "dancer" },
+        "titis_magic": { "price": 300, "per": "dancer" },
         "custom_stage": { "price": 2500, "per": "event" }
       }
     }

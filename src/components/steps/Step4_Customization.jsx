@@ -6,22 +6,15 @@ import useQuoteStore from '../../store/quoteStore'
 import pricing from '../../config/pricing.json'
 
 const LIGHTING_ADDONS = [
-  { id: 'led_lights', emoji: '💡', price: 100 },
   { id: 'ambient_lighting', emoji: '🌅', price: 150 },
   { id: 'smoke_machine', emoji: '💨', price: 50 }
 ]
 const AUDIO_ADDONS = [
-  { id: 'extra_sub', emoji: '🔊', price: 150 },
-  { id: 'extra_speakers', emoji: '📢', price: 100 }
-]
-const DJ_ADDONS = [
-  { id: 'mc_hosting', emoji: '🎤', price: 200 },
-  { id: 'vinyl_setup', emoji: '🎶', price: 100 },
-  { id: 'extra_dj', emoji: '👤', price: 350 },
-  { id: 'requests_app', emoji: '📱', price: 50 }
+  { id: 'extra_sub', emoji: '🔊', price: 100 },
+  { id: 'extra_speakers', emoji: '📢', price: 75 }
 ]
 
-function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked, onToggle, quantity, onQtyChange, showQty }) {
+function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked, onToggle, quantity, onQtyChange, showQty, maxQty }) {
   return (
     <motion.div
       whileTap={{ scale: 0.98 }}
@@ -62,7 +55,7 @@ function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked
             <span className="text-sm font-semibold text-[var(--color-text)] w-4 text-center">{quantity}</span>
             <button
               className="w-6 h-6 rounded text-xs border border-[var(--color-border)] text-[var(--color-text-muted)]"
-              onClick={() => onQtyChange(quantity + 1)}
+              onClick={() => onQtyChange(Math.min(maxQty || 99, quantity + 1))}
             >+</button>
           </div>
         )}
@@ -91,7 +84,7 @@ export default function Step4_Customization() {
   )
 
   return (
-    <div className="px-4 py-6 space-y-6 pb-24">
+    <div className="px-3 py-5 space-y-5 pb-24">
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">
           {t('steps.4.title')}
@@ -122,43 +115,36 @@ export default function Step4_Customization() {
 
       {hasAudio && (
         <Section title={lang === 'fi' ? 'Äänentoisto-lisät' : 'Audio Extras'}>
-          {AUDIO_ADDONS.map(({ id, emoji, price }) => (
-            <AddonCard
-              key={id}
-              serviceId="audio"
-              addonId={id}
-              emoji={emoji}
-              price={price}
-              label={t(`addons.audio.${id}`)}
-              desc={t(`addons.audio.${id}_desc`)}
-              checked={isChecked('audio', id)}
-              onToggle={() => toggleAddon('audio', id)}
-              quantity={qty('audio', id)}
-              onQtyChange={(q) => setAddonQuantity('audio', id, q)}
-              showQty={id === 'extra_speakers'}
-            />
-          ))}
-        </Section>
-      )}
-
-      {hasDJ && (
-        <Section title={lang === 'fi' ? 'DJ-lisät' : 'DJ Extras'}>
-          {DJ_ADDONS.map(({ id, emoji, price }) => (
-            <AddonCard
-              key={id}
-              serviceId="dj"
-              addonId={id}
-              emoji={emoji}
-              price={price}
-              label={t(`addons.dj.${id}`)}
-              desc={t(`addons.dj.${id}_desc`)}
-              checked={isChecked('dj', id)}
-              onToggle={() => toggleAddon('dj', id)}
-              quantity={qty('dj', id)}
-              onQtyChange={(q) => setAddonQuantity('dj', id, q)}
-              showQty={false}
-            />
-          ))}
+          <AddonCard
+            serviceId="audio"
+            addonId="extra_sub"
+            emoji="🔊"
+            price={100}
+            label={lang === 'fi' ? 'Lisäsubwoofer' : 'Extra Subwoofer'}
+            desc={lang === 'fi' ? 'Suositellaan yli 150 hengen tapahtumiin — €100/kpl' : 'Recommended for events with 150+ guests — €100 each'}
+            checked={isChecked('audio', 'extra_sub')}
+            onToggle={() => toggleAddon('audio', 'extra_sub')}
+            quantity={qty('audio', 'extra_sub')}
+            onQtyChange={(q) => setAddonQuantity('audio', 'extra_sub', q)}
+            showQty={true}
+            maxQty={4}
+          />
+          <AddonCard
+            serviceId="audio"
+            addonId="extra_speakers"
+            emoji="📢"
+            price={75}
+            label={lang === 'fi' ? 'Lisäkaiuttimet' : 'Extra Speakers'}
+            desc={lang === 'fi'
+              ? 'Suositellaan yli 150 hengen tai isoon tilaan — taustamusiikki terassille tai muihin tiloihin. €75/kpl, max 8 kpl'
+              : 'Recommended for 150+ guests or large venues — background music on terrace or other areas. €75 each, up to 8'}
+            checked={isChecked('audio', 'extra_speakers')}
+            onToggle={() => toggleAddon('audio', 'extra_speakers')}
+            quantity={qty('audio', 'extra_speakers')}
+            onQtyChange={(q) => setAddonQuantity('audio', 'extra_speakers', q)}
+            showQty={true}
+            maxQty={8}
+          />
         </Section>
       )}
 
@@ -167,22 +153,27 @@ export default function Step4_Customization() {
           serviceId="extras"
           addonId="titis_magic"
           emoji="💃"
-          price={200}
-          label={lang === 'fi' ? 'Titis Magic' : 'Titis Magic'}
-          desc={lang === 'fi' ? '€200 per tanssija' : '€200 per dancer'}
+          price={300}
+          label="Titis Magic"
+          desc={lang === 'fi'
+            ? '€300 per tanssija — Ammattitaitoiset tanssijat räätälöidyissä asuissa, jotka tuovat juhliisi lisää energiaa ja viihdettä.'
+            : '€300 per dancer — Professional dancers with custom outfits, bringing extra energy and entertainment to your event.'}
           checked={isChecked('extras', 'titis_magic')}
           onToggle={() => toggleAddon('extras', 'titis_magic')}
           quantity={qty('extras', 'titis_magic')}
           onQtyChange={(q) => setAddonQuantity('extras', 'titis_magic', q)}
           showQty={true}
+          maxQty={5}
         />
         <AddonCard
           serviceId="extras"
           addonId="custom_stage"
-          emoji="🎭"
+          emoji="👑"
           price={2500}
-          label={lang === 'fi' ? 'Custom Stage Design' : 'Custom Stage Design'}
-          desc={lang === 'fi' ? 'Alkaen €2500 — LED-näytöt, moving heads, savukoneet, strobot' : 'From €2500 — LED screens, moving heads, smoke machines, strobes'}
+          label={lang === 'fi' ? 'Baller Stage' : 'Baller Stage'}
+          desc={lang === 'fi'
+            ? 'Alkaen €2500+ — Korkealaatuinen lavarakenne: LED-näytöt, moving heads, savukoneet & strobot. Täydellinen premium-tapahtumiin.'
+            : 'From €2500+ — High quality custom stage design: LED screens, moving heads, smoke machines & strobes. The ultimate premium setup.'}
           checked={isChecked('extras', 'custom_stage')}
           onToggle={() => toggleAddon('extras', 'custom_stage')}
           quantity={qty('extras', 'custom_stage')}

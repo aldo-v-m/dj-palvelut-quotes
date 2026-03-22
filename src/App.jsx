@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import useQuoteStore from './store/quoteStore'
 import StepIndicator from './components/Layout/StepIndicator'
@@ -12,6 +12,9 @@ import Step3_Services from './components/steps/Step3_Services'
 import Step4_Customization from './components/steps/Step4_Customization'
 import Step5_Quote from './components/steps/Step5_Quote'
 import Step6_Contact from './components/steps/Step6_Contact'
+import AdminPanel from './components/AdminPanel'
+import QuickContact from './components/QuickContact'
+import { trackStepView } from './utils/analytics'
 
 const STEPS = [
   Step0_Language,
@@ -35,11 +38,23 @@ export default function App() {
   const { currentStep, restoreState } = useQuoteStore()
   const [direction, setDirection] = React.useState(1)
   const prevStepRef = useRef(currentStep)
+  const [isAdmin, setIsAdmin] = useState(window.location.hash === '#admin')
+  const [isQuick, setIsQuick] = useState(window.location.hash === '#quick')
+
+  // Listen for hash changes to toggle modes
+  useEffect(() => {
+    const onHash = () => {
+      setIsAdmin(window.location.hash === '#admin')
+      setIsQuick(window.location.hash === '#quick')
+    }
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   // Restore state from URL hash (quote sharing)
   useEffect(() => {
     const hash = window.location.hash?.slice(1)
-    if (hash) {
+    if (hash && hash !== 'admin') {
       try {
         const state = JSON.parse(atob(hash))
         restoreState({ ...state, currentStep: 5 })
@@ -49,10 +64,11 @@ export default function App() {
     }
   }, [])
 
-  // Track direction for slide animation
+  // Track direction for slide animation + GA step view
   useEffect(() => {
     setDirection(currentStep > prevStepRef.current ? 1 : -1)
     prevStepRef.current = currentStep
+    trackStepView(currentStep)
   }, [currentStep])
 
   // Auto-resize for Squarespace iframe embed
@@ -72,11 +88,14 @@ export default function App() {
 
   const StepComponent = STEPS[currentStep]
 
+  if (isAdmin) return <AdminPanel />
+  if (isQuick) return <QuickContact onBack={() => { window.location.hash = ''; setIsQuick(false) }} />
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
-      <div className="max-w-[780px] mx-auto">
+    <div style={{ backgroundColor: 'var(--color-bg)' }}>
+      <div className="max-w-[680px] mx-auto">
         {currentStep > 0 && (
-          <div className="flex items-center gap-3 px-4 pt-4 pb-2">
+          <div className="flex items-center gap-3 px-3 pt-3 pb-1">
             <div className="flex-1">
               <ProgressBar />
             </div>

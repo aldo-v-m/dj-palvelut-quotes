@@ -25,8 +25,10 @@
     "6": { "title": "Contact", "desc": "Send us your inquiry" }
   },
   "language": {
-    "select_title": "Welcome",
-    "select_subtitle": "Please select your language",
+    "select_title": "DJ Palvelut",
+    "select_subtitle": "Calculate your price in a minute — we'll call you to give you professional help.",
+    "cta_tagline": "Professional DJ & AV services for your event",
+    "just_call_me": "Just call me — +358 45 884 4121",
     "english": "English",
     "finnish": "Finnish (Suomi)",
     "auto_detected": "Language detected",

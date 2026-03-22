@@ -19,7 +19,7 @@ export default function StickyQuoteSummary() {
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--color-border)]"
       style={{ backdropFilter: 'blur(12px)', backgroundColor: 'rgba(15,15,17,0.85)' }}
     >
-      <div className="max-w-[780px] mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="max-w-[680px] mx-auto px-3 py-2.5 flex items-center justify-between">
         <span className="text-sm text-[var(--color-text-muted)]">
           {selectedServices.length > 0
             ? t('services.running_total', { count: selectedServices.length, price: Math.round(quote.subtotalBeforeVat) })

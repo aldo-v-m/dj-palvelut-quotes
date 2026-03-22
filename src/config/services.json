@@ -5,9 +5,9 @@
     "color": "purple",
     "name_en": "DJ Services",
     "name_fi": "DJ-palvelut",
-    "desc_en": "Professional DJ without PA system — music, mixing & entertainment",
-    "desc_fi": "Ammattitaitoinen DJ ilman äänentoistoa — musiikki, miksaus & viihdytys",
-    "from_price": 500,
+    "desc_en": "Professional DJ Controller included. Up to 5 hours of DJ playing + setup & teardown. Extra hours €50/h.",
+    "desc_fi": "Ammattitaitoinen DJ-kontrolleri mukana. Sisältää 5 tuntia soittoa + pystytys ja purku. Lisätunnit €50/h.",
+    "from_price": 450,
     "popular": true
   },
   {
@@ -16,9 +16,9 @@
     "color": "blue",
     "name_en": "Pro Sound System",
     "name_fi": "Pro Äänentoisto",
-    "desc_en": "Pro-level PA, subwoofer, microphone & live mixing (DB Technologies & JBL)",
-    "desc_fi": "Pro-tason äänentoisto, subwoofer, mikrofoni & livemiksaus (DB Technologies & JBL)",
-    "from_price": 350,
+    "desc_en": "Professional 2 High Quality Speakers + 1 High Quality Subwoofer. Flat fee, any event length.",
+    "desc_fi": "2 laadukasta kaiutinta + 1 laadukas subwoofer. Kiinteä hinta, tapahtuman pituudesta riippumatta.",
+    "from_price": 200,
     "popular": false
   },
   {
@@ -27,8 +27,8 @@
     "color": "amber",
     "name_en": "Lighting",
     "name_fi": "Valaistus",
-    "desc_en": "LED lights, strobes & ambient lighting — pick your options",
-    "desc_fi": "LED valot, strobot & tunnelmavalaitus — valitse haluamasi",
+    "desc_en": "LED lights included. Add atmosphere lighting & fog machine as extras.",
+    "desc_fi": "LED-valot sisältyy hintaan. Lisää tunnelmavalaistus ja savukone lisäpalveluina.",
     "from_price": 100,
     "popular": false
   },

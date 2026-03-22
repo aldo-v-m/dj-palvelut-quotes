@@ -40,6 +40,7 @@ const useQuoteStore = create((set, get) => ({
   setCurrentStep: (step) => set({ currentStep: step }),
   nextStep: () => set((s) => ({ currentStep: Math.min(s.currentStep + 1, 6) })),
   prevStep: () => set((s) => ({ currentStep: Math.max(s.currentStep - 1, 0) })),
+  goToStep: (step) => set({ currentStep: step }),
 
   setEventDetails: (details) => set((s) => ({
     eventDetails: { ...s.eventDetails, ...details }

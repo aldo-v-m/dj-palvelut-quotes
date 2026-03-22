@@ -10,7 +10,7 @@ export default function Step0_Language() {
   const [detected, setDetected] = useState(null)
 
   useEffect(() => {
-    const lang = navigator.language?.startsWith('en') ? 'en' : 'fi'
+    const lang = 'fi'  // Finnish is always the default
     setDetected(lang)
     let count = 30
     setCountdown(count)
@@ -38,14 +38,19 @@ export default function Step0_Language() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-12"
+        className="text-center mb-8"
       >
         <h1 className="text-4xl font-bold text-[var(--color-text)] mb-3">
           {t('language.select_title')}
         </h1>
-        <p className="text-[var(--color-text-muted)]">{t('language.select_subtitle')}</p>
+        <p className="text-base text-[var(--color-text-muted)] max-w-xs mx-auto leading-relaxed">
+          {t('language.select_subtitle')}
+        </p>
+        <p className="text-sm font-medium mt-3" style={{ color: 'var(--color-accent)' }}>
+          {t('language.cta_tagline')}
+        </p>
         {detected && countdown !== null && countdown > 0 && (
-          <p className="text-xs text-[var(--color-text-muted)] mt-3">
+          <p className="text-xs text-[var(--color-text-muted)] mt-2">
             {t('language.auto_advance', { seconds: countdown })}
           </p>
         )}
@@ -53,8 +58,8 @@ export default function Step0_Language() {
 
       <div className="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
         {[
-          { code: 'en', label: t('language.english'), flag: '🇬🇧' },
-          { code: 'fi', label: t('language.finnish'), flag: '🇫🇮' }
+          { code: 'fi', label: t('language.finnish'), flag: '🇫🇮' },
+          { code: 'en', label: t('language.english'), flag: '🇬🇧' }
         ].map(({ code, label, flag }) => (
           <motion.button
             key={code}
@@ -76,9 +81,18 @@ export default function Step0_Language() {
         ))}
       </div>
 
+      {/* Just call me — opens quick lead capture */}
+      <button
+        onClick={() => { window.location.hash = 'quick' }}
+        className="mt-4 flex items-center justify-center gap-2 w-full max-w-sm py-3.5 rounded-2xl font-semibold text-sm transition-all"
+        style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }}
+      >
+        📞 {t('language.just_call_me')}
+      </button>
+
       <button
         onClick={nextStep}
-        className="mt-8 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+        className="mt-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
       >
         {t('common.skip')} →
       </button>
