@@ -83,10 +83,10 @@ export default function Step3_Services() {
             <Tag size={15} style={{ color: '#0f1f10' }} className="shrink-0" />
             <span className="font-bold text-sm" style={{ color: '#0f1f10' }}>
               {count >= 4
-                ? (lang === 'fi' ? '🎉 Maksimialennus 15% — erinomainen valinta!' : '🎉 Maximum 15% discount — excellent choice!')
+                ? (lang === 'fi' ? '🎉 Loistava valinta — täysi 15% pakettialennus!' : '🎉 Maximum 15% discount — excellent choice!')
                 : count === 3
-                ? (lang === 'fi' ? '10% pakettialennus aktiivinen' : '10% package discount active')
-                : (lang === 'fi' ? '5% pakettialennus aktiivinen' : '5% package discount active')}
+                ? (lang === 'fi' ? '10% pakettialennus voimassa' : '10% package discount active')
+                : (lang === 'fi' ? '5% pakettialennus voimassa' : '5% package discount active')}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm pl-5">
@@ -112,11 +112,6 @@ export default function Step3_Services() {
               {lang === 'fi'
                 ? `💚 Lisää ${nextLabel} ja säästä €${nextSaving.toFixed(0)}${extraSaving > 0 ? ` (€${extraSaving.toFixed(0)} enemmän)` : ''}!`
                 : `💚 Add ${nextLabel} and save €${nextSaving.toFixed(0)}${extraSaving > 0 ? ` (€${extraSaving.toFixed(0)} more)` : ''}!`}
-            </p>
-            <p className="text-xs mt-0.5" style={{ color: 'rgba(110,231,183,0.75)' }}>
-              {lang === 'fi'
-                ? `Kaikki 4 palvelua → säästä jopa €${maxSaving.toFixed(0)} (15% alennus)`
-                : `All 4 packages → save up to €${maxSaving.toFixed(0)} (15% off)`}
             </p>
           </div>
         </div>

@@ -67,7 +67,7 @@ export function useQuoteCalculator() {
       const subtotal = basePrice + durationCost + addonsCost
       if (subtotal === 0) return null
 
-      return { serviceId, basePrice, durationCost, addonsCost, addonLines, subtotal, effectiveHours: effectiveHours || hours }
+      return { serviceId, basePrice, durationCost, addonsCost, addonLines, subtotal, effectiveHours: effectiveHours || hours, minHours: svcPricing.min_hours || 0, hourlyRate: svcPricing.hourly_rate || 0 }
     }).filter(Boolean)
 
     // Discount applies only to core services, NOT extras (dancers, stage etc.)

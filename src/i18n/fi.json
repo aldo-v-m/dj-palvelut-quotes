@@ -26,7 +26,7 @@
   },
   "language": {
     "select_title": "DJ Palvelut",
-    "select_subtitle": "Laske hintasi minuutissa — soitamme sinulle ja annamme ammattiapua.",
+    "select_subtitle": "Laske hintasi minuutissa — soitamme sinulle ja räätälöimme juuri sinulle sopivan paketin.",
     "cta_tagline": "Ammattitaitoiset DJ- ja AV-palvelut tapahtumaasi",
     "just_call_me": "Soita meille — +358 45 884 4121",
     "english": "Englanti",
@@ -44,7 +44,7 @@
     "guests_label": "Vieraiden m\u00e4\u00e4r\u00e4",
     "venue_label": "Tapahtumapaikan nimi",
     "venue_placeholder": "esim. Finlandia-talo",
-    "time_label": "Tapahtuman ajat",
+    "time_label": "Tapahtuma-ajat",
     "start_time": "Aloitusaika",
     "end_time": "Lopetusaika",
     "duration_calculated": "Tapahtuman kesto",
@@ -76,7 +76,7 @@
     "base_price": "Perushinta: \u20ac{{price}}",
     "ai_recommendation": "Teko\u00e4lysuositus",
     "apply_recommendation": "K\u00e4yt\u00e4 suositusta",
-    "running_total": "{{count}} palvelua \u00b7 alkaen \u20ac{{price}}"
+    "running_total": "{{count}} palvelua valittu \u00b7 \u20ac{{price}}"
   },
   "addons": {
     "title": "Mukauta pakettisi",

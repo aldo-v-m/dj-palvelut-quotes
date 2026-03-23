@@ -27,5 +27,13 @@ export async function exportQuotePDF(elementId, filename) {
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
   }
 
-  pdf.save(filename || 'quote.pdf')
+  // Open as blob URL in a new tab — works reliably on iOS Safari and Android.
+  // Falls back to direct save if popup is blocked (e.g. desktop with strict settings).
+  const blob = pdf.output('blob')
+  const blobUrl = URL.createObjectURL(blob)
+  const newWindow = window.open(blobUrl, '_blank')
+  if (!newWindow) {
+    pdf.save(filename || 'quote.pdf')
+  }
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 15000)
 }

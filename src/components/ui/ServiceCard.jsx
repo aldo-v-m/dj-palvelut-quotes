@@ -3,8 +3,18 @@ import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Music, Speaker, Zap, Sparkles, Check } from 'lucide-react'
 import usePricingStore from '../../store/pricingStore'
+import useQuoteStore from '../../store/quoteStore'
 
 const ICONS = { Music, Speaker, Zap, Sparkles }
+
+function formatExtraHours(hours) {
+  if (hours <= 0) return ''
+  const h = Math.floor(hours)
+  const mins = Math.round((hours - h) * 60)
+  if (h === 0) return `${mins} min`
+  if (mins === 0) return `${h}h`
+  return `${h}h ${mins}min`
+}
 
 const COLOR_MAP = {
   purple: { border: '#a855f7', glow: 'rgba(168,85,247,0.15)' },
@@ -20,6 +30,13 @@ export default function ServiceCard({ service, selected, onToggle }) {
   const colors = COLOR_MAP[service.color] || COLOR_MAP.purple
   const pricing = usePricingStore((s) => s.pricing)
   const basePrice = service.from_price || pricing.services[service.id]?.base_price || 0
+  const durationHours = useQuoteStore((s) => s.eventDetails.durationHours) || 4
+
+  // For DJ: show flat base + extra hours cost if duration exceeds included hours
+  const djPricing = service.id === 'dj' ? pricing.services['dj'] : null
+  const djExtraHours = djPricing ? Math.max(0, durationHours - djPricing.min_hours) : 0
+  const djExtraCost = djExtraHours * (djPricing?.hourly_rate || 50)
+  const djTotal = basePrice + djExtraCost
 
   return (
     <motion.button
@@ -54,11 +71,15 @@ export default function ServiceCard({ service, selected, onToggle }) {
       <h3 className="font-semibold text-[var(--color-text)] text-sm mb-1 leading-tight pr-6">
         {lang === 'fi' ? service.name_fi : service.name_en}
       </h3>
-      <p className="text-xs text-[var(--color-text-muted)] mb-2 leading-relaxed line-clamp-2">
+      <p className={`text-xs text-[var(--color-text-muted)] mb-2 leading-relaxed ${selected ? '' : 'line-clamp-2'}`}>
         {lang === 'fi' ? service.desc_fi : service.desc_en}
       </p>
       <div className="text-xs font-semibold" style={{ color: colors.border }}>
-        {t('services.from_price', { price: basePrice })}
+        {service.id === 'dj' && djExtraHours > 0
+          ? (lang === 'fi'
+              ? `Alkaen €${basePrice} + €${Math.round(djExtraCost)} (${formatExtraHours(djExtraHours)}) = €${Math.round(djTotal)}`
+              : `From €${basePrice} + €${Math.round(djExtraCost)} (${formatExtraHours(djExtraHours)}) = €${Math.round(djTotal)}`)
+          : t('services.from_price', { price: basePrice })}
       </div>
     </motion.button>
   )

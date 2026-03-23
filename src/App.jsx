@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { RotateCcw } from 'lucide-react'
 import useQuoteStore from './store/quoteStore'
 import StepIndicator from './components/Layout/StepIndicator'
 import LanguageToggle from './components/Layout/LanguageToggle'
@@ -35,11 +36,26 @@ const SLIDE_VARIANTS = {
 const SPRING = { type: 'spring', stiffness: 300, damping: 30 }
 
 export default function App() {
-  const { currentStep, restoreState } = useQuoteStore()
+  const { currentStep, language, restoreState, resetState } = useQuoteStore()
   const [direction, setDirection] = React.useState(1)
   const prevStepRef = useRef(currentStep)
   const [isAdmin, setIsAdmin] = useState(window.location.hash === '#admin')
   const [isQuick, setIsQuick] = useState(window.location.hash === '#quick')
+
+  // Show resume banner when persisted session has progress, but not on shared-quote loads
+  const [showResumeBanner, setShowResumeBanner] = useState(() => {
+    const hash = window.location.hash?.slice(1)
+    const isSpecialHash = hash === 'admin' || hash === 'quick'
+    const isSharedQuote = hash && !isSpecialHash
+    return currentStep > 0 && !isSharedQuote
+  })
+
+  const lang = language
+
+  const handleReset = () => {
+    resetState()
+    setShowResumeBanner(false)
+  }
 
   // Listen for hash changes to toggle modes
   useEffect(() => {
@@ -51,13 +67,14 @@ export default function App() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
-  // Restore state from URL hash (quote sharing)
+  // Restore state from URL hash (quote sharing) — unicode-safe
   useEffect(() => {
     const hash = window.location.hash?.slice(1)
-    if (hash && hash !== 'admin') {
+    if (hash && hash !== 'admin' && hash !== 'quick') {
       try {
-        const state = JSON.parse(atob(hash))
+        const state = JSON.parse(decodeURIComponent(escape(atob(hash))))
         restoreState({ ...state, currentStep: 5 })
+        setShowResumeBanner(false)
       } catch {
         // Invalid hash — ignore
       }
@@ -94,12 +111,51 @@ export default function App() {
   return (
     <div style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="max-w-[680px] mx-auto">
+        {/* Resume session banner */}
+        {showResumeBanner && currentStep > 0 && (
+          <div
+            className="mx-3 mt-3 px-4 py-3 rounded-xl flex items-center justify-between gap-3 text-sm"
+            style={{ backgroundColor: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.3)' }}
+          >
+            <span style={{ color: '#6ee7b7' }}>
+              {lang === 'fi' ? '👋 Jatketaan siitä mihin jäit' : '👋 Continuing where you left off'}
+            </span>
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={handleReset}
+                className="text-xs underline"
+                style={{ color: 'rgba(110,231,183,0.55)' }}
+              >
+                {lang === 'fi' ? 'Aloita alusta' : 'Start fresh'}
+              </button>
+              <button
+                onClick={() => setShowResumeBanner(false)}
+                className="text-xs font-medium px-2.5 py-1 rounded-lg"
+                style={{ backgroundColor: 'rgba(34,197,94,0.15)', color: '#6ee7b7' }}
+              >
+                {lang === 'fi' ? 'Jatka' : 'Continue'}
+              </button>
+            </div>
+          </div>
+        )}
+
         {currentStep > 0 && (
-          <div className="flex items-center gap-3 px-3 pt-3 pb-1">
+          <div className="flex items-center gap-2 px-3 pt-3 pb-1">
             <div className="flex-1">
               <ProgressBar />
             </div>
             <LanguageToggle />
+            <button
+              onClick={handleReset}
+              title={lang === 'fi' ? 'Aloita alusta' : 'Start fresh'}
+              className="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
+              style={{
+                color: 'var(--color-text-muted)',
+                border: '1px solid var(--color-border)'
+              }}
+            >
+              <RotateCcw size={13} />
+            </button>
           </div>
         )}
 

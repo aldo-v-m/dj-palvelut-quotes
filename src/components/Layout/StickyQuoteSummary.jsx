@@ -6,13 +6,10 @@ import useQuoteStore from '../../store/quoteStore'
 export default function StickyQuoteSummary() {
   const { t } = useTranslation()
   const currentStep = useQuoteStore((s) => s.currentStep)
-  const showVatIncluded = useQuoteStore((s) => s.showVatIncluded)
   const selectedServices = useQuoteStore((s) => s.selectedServices)
   const quote = useQuoteCalculator()
 
   if (currentStep < 3 || currentStep === 6) return null
-
-  const displayTotal = showVatIncluded ? quote.totalWithVat : quote.subtotalBeforeVat
 
   return (
     <div
@@ -22,15 +19,12 @@ export default function StickyQuoteSummary() {
       <div className="max-w-[680px] mx-auto px-3 py-2.5 flex items-center justify-between">
         <span className="text-sm text-[var(--color-text-muted)]">
           {selectedServices.length > 0
-            ? t('services.running_total', { count: selectedServices.length, price: Math.round(quote.subtotalBeforeVat) })
+            ? t('services.running_total', { count: selectedServices.length, price: quote.total.toFixed(2) })
             : t('services.title')}
         </span>
         <div className="text-right">
           <div className="text-lg font-bold text-[var(--color-accent)]">
-            €{displayTotal.toFixed(2)}
-          </div>
-          <div className="text-xs text-[var(--color-text-muted)]">
-            {showVatIncluded ? t('quote.incl_vat') : t('quote.excl_vat')}
+            €{quote.total.toFixed(2)}
           </div>
         </div>
       </div>

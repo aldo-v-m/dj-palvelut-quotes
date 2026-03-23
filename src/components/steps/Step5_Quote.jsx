@@ -31,7 +31,7 @@ export default function Step5_Quote() {
 
   const handleShare = () => {
     const state = store.getSerializableState()
-    const encoded = btoa(JSON.stringify(state))
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(state))))
     const url = `${window.location.href.split('#')[0]}#${encoded}`
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
@@ -211,7 +211,7 @@ export default function Step5_Quote() {
                 })}
                 {li.durationCost > 0 && (
                   <div className="flex justify-between text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                    <span>{lang === 'fi' ? `Lisätunnit (${li.effectiveHours - 5}h × €50)` : `Extra hours (${li.effectiveHours - 5}h × €50)`}</span>
+                    <span>{lang === 'fi' ? `Lisätunnit (${li.effectiveHours - li.minHours}h × €${li.hourlyRate})` : `Extra hours (${li.effectiveHours - li.minHours}h × €${li.hourlyRate})`}</span>
                     <span>+€{li.durationCost.toFixed(2)}</span>
                   </div>
                 )}
@@ -249,8 +249,8 @@ export default function Step5_Quote() {
           <div className="flex items-start gap-2 p-3 rounded-xl text-sm"
             style={{ backgroundColor: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', color: '#fbbf24' }}>
             🤝 {lang === 'fi'
-              ? `Sijainti on yli 250 km — sinut ohjataan lähimpään kumppaniin alueellasi.`
-              : `Location is over 250 km — you will be referred to one of our partners closer to your location.`}
+              ? `Sijainti on yli 250 km — ohjaamme sinut lähimmälle kumppanillemme alueellasi.`
+              : `Location is over 250 km — we will connect you with our nearest partner in your area.`}
           </div>
         )}
 
@@ -261,7 +261,7 @@ export default function Step5_Quote() {
             </span>
             <span style={{ color: quote.travelFee > 0 ? 'var(--color-accent)' : 'var(--color-success)' }}>
               {quote.distanceKm} km — {quote.travelFee > 0
-                ? (lang === 'fi' ? 'Matkakulualue' : 'Chargeable zone')
+                ? (lang === 'fi' ? 'Maksullinen matka-alue' : 'Chargeable zone')
                 : (lang === 'fi' ? 'Maksuton alue' : 'Free zone')}
             </span>
           </div>
@@ -279,7 +279,7 @@ export default function Step5_Quote() {
               </div>
             )}
             {/* Green — new discounted price */}
-            <div className="text-2xl font-bold" style={{ color: quote.packageDiscount < 0 ? '#6ee7b7' : 'var(--color-accent)' }}>
+            <div className="text-2xl font-bold" style={{ color: quote.packageDiscount < 0 ? '#22c55e' : 'var(--color-accent)' }}>
               €{quote.total.toFixed(2)}
             </div>
           </div>
@@ -305,12 +305,12 @@ export default function Step5_Quote() {
         </div>
         <p className="text-sm leading-relaxed" style={{ color: 'rgba(110,231,183,0.85)' }}>
           {lang === 'fi'
-            ? 'Jos et ole 100% tyytyväinen palveluumme, emme veloita sinulta mitään. Ei kysymyksiä, ei selityksiä — takuumme on ehdoton.'
+            ? 'Jos et ole täysin tyytyväinen, et maksa mitään. Ei kysymyksiä, ei selittelyjä — takuumme on ehdoton.'
             : 'If you are not 100% satisfied with our service, you pay absolutely nothing. No questions asked, no explanations needed — our guarantee is unconditional.'}
         </p>
         <p className="text-sm leading-relaxed" style={{ color: 'rgba(110,231,183,0.85)' }}>
           {lang === 'fi'
-            ? '🔄 Jos DJ sairastuu tai on estynyt, löydämme korvaavan DJ:n veloituksetta — tapahtumasi ei peruunnu koskaan.'
+            ? '🔄 Jos DJ sairastuu tai estyy, järjestämme korvaavan DJ:n veloituksetta — tapahtumasi ei peruunnu koskaan.'
             : '🔄 If your DJ is sick or unavailable, we will find a replacement at no extra cost — your event will never be cancelled.'}
         </p>
         <div className="flex justify-center flex-wrap gap-4 pt-1 text-xs font-medium" style={{ color: 'rgba(110,231,183,0.7)' }}>
@@ -324,7 +324,7 @@ export default function Step5_Quote() {
       {/* Disclaimer — small, subtle */}
       <p className="text-xs text-center px-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
         {lang === 'fi'
-          ? 'Hinta on arvio. Soiton aikana varmistamme, että paketti sopii tarpeisiisi — et maksa turhista.'
+          ? 'Hinta on arvio. Puhelussa varmistamme, että paketti vastaa tarpeitasi — et maksa turhista.'
           : 'Price is an estimate. On the call we will make sure the package suits your needs and you don\'t pay for things you don\'t need.'}
       </p>
 

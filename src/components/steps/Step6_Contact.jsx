@@ -43,20 +43,33 @@ export default function Step6_Contact() {
     setError('')
     store.setContact(data)
 
+    const serviceLabels = {
+      dj: 'DJ-palvelut', audio: 'Pro Äänentoisto', lighting: 'Valaistus',
+      special_fx: 'Karaoke', extras: 'Erikoispalvelut'
+    }
+    const servicesFormatted = store.selectedServices.map((id) => serviceLabels[id] || id).join(', ')
+    const discountPct = Math.round(quote.packageDiscountRate * 100)
+
     const templateParams = {
       quote_id: store.quoteId,
       name: data.name,
       email: data.email,
       phone: data.phone || '-',
+      message: data.message || '-',
       event_type: store.eventDetails.eventType,
-      event_date: store.eventDetails.date,
-      duration: store.eventDetails.durationHours,
+      event_date: store.eventDetails.date
+        ? new Date(store.eventDetails.date).toLocaleDateString('fi-FI') : '-',
+      duration: `${store.eventDetails.durationHours}h`,
       guest_count: store.eventDetails.guestCount,
       venue_name: store.eventDetails.venueName || '-',
       address: store.location.address || '-',
-      distance_km: store.location.distanceKm || '-',
-      services: store.selectedServices.join(', '),
-      total: quote.totalWithVat.toFixed(2)
+      distance_km: store.location.distanceKm ? `${store.location.distanceKm} km` : '-',
+      services: servicesFormatted,
+      subtotal: quote.servicesSubtotal.toFixed(2),
+      discount: discountPct > 0 ? `-${discountPct}% (−€${Math.abs(quote.packageDiscount).toFixed(2)})` : '-',
+      travel_fee: quote.travelFee > 0 ? `€${quote.travelFee.toFixed(2)}` : 'Maksuton',
+      total: quote.total.toFixed(2),
+      quote_url: `${window.location.origin}${window.location.pathname}`
     }
 
     const airtableRecord = {
