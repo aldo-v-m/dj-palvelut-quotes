@@ -25,9 +25,10 @@
     "6": { "title": "Contact", "desc": "Send us your inquiry" }
   },
   "language": {
-    "select_title": "DJ Palvelut",
-    "select_subtitle": "Calculate your price in a minute — we'll call you to give you professional help.",
+    "select_title": "DJ Service Price Calculator",
+    "select_subtitle": "Get an instant quote in under a minute — we'll call you to tailor the perfect package.",
     "cta_tagline": "Professional DJ & AV services for your event",
+    "calculate_cta": "Calculate your price →",
     "just_call_me": "Just call me — +358 45 884 4121",
     "english": "English",
     "finnish": "Finnish (Suomi)",

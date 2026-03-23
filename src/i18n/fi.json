@@ -25,8 +25,9 @@
     "6": { "title": "Yhteystiedot", "desc": "L\u00e4het\u00e4 kyselysi" }
   },
   "language": {
-    "select_title": "DJ Palvelut",
-    "select_subtitle": "Laske hintasi minuutissa — soitamme sinulle ja räätälöimme juuri sinulle sopivan paketin.",
+    "select_title": "DJ-hinnanlaskuri",
+    "select_subtitle": "Laske hintasi alle minuutissa — soitamme sinulle ja räätälöimme juuri sinulle sopivan paketin.",
+    "calculate_cta": "Laske hintasi →",
     "cta_tagline": "Ammattitaitoiset DJ- ja AV-palvelut tapahtumaasi",
     "just_call_me": "Soita meille — +358 45 884 4121",
     "english": "Englanti",

@@ -92,9 +92,10 @@ export default function Step0_Language() {
 
       <button
         onClick={nextStep}
-        className="mt-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+        className="mt-3 w-full max-w-sm py-4 rounded-2xl font-bold text-sm transition-all"
+        style={{ backgroundColor: 'var(--color-accent)', color: '#0a130c' }}
       >
-        {t('common.skip')} →
+        {t('language.calculate_cta')}
       </button>
     </div>
   )
