@@ -160,8 +160,137 @@ function ResistanceChart({ stepData }) {
     </div>
   )
 }
-function Breakdowns() { return null }
-function SessionTable() { return null }
+function BarList({ title, items }) {
+  const max = Math.max(...items.map((i) => i.count), 1)
+  return (
+    <div className="rounded-xl p-4 space-y-3 flex-1" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-accent)' }}>{title}</h3>
+      <div className="space-y-2">
+        {items.map(({ label, count, pct }) => (
+          <div key={label}>
+            <div className="flex justify-between text-xs mb-1">
+              <span style={{ color: 'var(--color-text)' }}>{label}</span>
+              <span style={{ color: 'var(--color-text-muted)' }}>{Math.round(pct * 100)}%</span>
+            </div>
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
+              <div className="h-full rounded-full" style={{ width: `${Math.round((count / max) * 100)}%`, backgroundColor: 'var(--color-accent-2)' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function Breakdowns({ sessions }) {
+  const serviceSessions = sessions.filter((s) => s.selectedServices)
+  const allServices = serviceSessions.flatMap((s) => s.selectedServices.split(', ').map((x) => x.trim()).filter(Boolean))
+  const serviceCounts = Object.entries(
+    allServices.reduce((acc, s) => ({ ...acc, [s]: (acc[s] || 0) + 1 }), {})
+  ).map(([label, count]) => ({ label, count, pct: serviceSessions.length > 0 ? count / serviceSessions.length : 0 }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6)
+
+  const eventSessions = sessions.filter((s) => s.eventType)
+  const eventCounts = Object.entries(
+    eventSessions.reduce((acc, s) => ({ ...acc, [s.eventType]: (acc[s.eventType] || 0) + 1 }), {})
+  ).map(([label, count]) => ({ label, count, pct: eventSessions.length > 0 ? count / eventSessions.length : 0 }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6)
+
+  if (!serviceCounts.length && !eventCounts.length) return null
+
+  return (
+    <div className="flex gap-3">
+      {serviceCounts.length > 0 && <BarList title="Top Services" items={serviceCounts} />}
+      {eventCounts.length   > 0 && <BarList title="Event Types"  items={eventCounts}  />}
+    </div>
+  )
+}
+
+function SessionTable({ sessions, page, setPage, pageSize }) {
+  const total  = sessions.length
+  const pages  = Math.ceil(total / pageSize)
+  const slice  = sessions.slice(page * pageSize, (page + 1) * pageSize)
+
+  if (!total) return (
+    <div className="text-center py-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>No sessions recorded yet.</div>
+  )
+
+  return (
+    <div className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--color-border)' }}>
+      <div className="px-4 py-2.5 flex items-center justify-between" style={{ backgroundColor: 'var(--color-surface)' }}>
+        <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-accent)' }}>Sessions</h3>
+        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{total} total</span>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr style={{ backgroundColor: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--color-border)' }}>
+              {['Date', 'Event', 'Services', 'Quote', 'Step', '✓'].map((h) => (
+                <th key={h} className="px-3 py-2 text-left font-medium" style={{ color: 'var(--color-text-muted)' }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {slice.map((s, i) => (
+              <tr
+                key={s.id || i}
+                style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)' }}
+              >
+                <td className="px-3 py-2" style={{ color: 'var(--color-text-muted)' }}>
+                  {s.startedAt ? new Date(s.startedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—'}
+                </td>
+                <td className="px-3 py-2 capitalize" style={{ color: 'var(--color-text)' }}>{s.eventType || '—'}</td>
+                <td className="px-3 py-2" style={{ color: 'var(--color-text-muted)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {s.selectedServices || '—'}
+                </td>
+                <td className="px-3 py-2" style={{ color: 'var(--color-text)' }}>
+                  {s.quoteTotal > 0 ? `€${s.quoteTotal.toLocaleString()}` : '—'}
+                </td>
+                <td className="px-3 py-2" style={{ color: 'var(--color-text-muted)' }}>
+                  {STEP_NAMES[s.furthestStep] ?? `Step ${s.furthestStep}`}
+                </td>
+                <td className="px-3 py-2">
+                  {s.converted && (
+                    <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold" style={{ backgroundColor: 'rgba(110,231,183,0.15)', color: 'var(--color-success)' }}>
+                      Lead
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {pages > 1 && (
+        <div className="flex items-center justify-between px-4 py-2.5" style={{ backgroundColor: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' }}>
+          <button
+            onClick={() => setPage((p) => Math.max(0, p - 1))}
+            disabled={page === 0}
+            className="text-xs disabled:opacity-40"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            ← Prev
+          </button>
+          <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            {page + 1} / {pages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(pages - 1, p + 1))}
+            disabled={page === pages - 1}
+            className="text-xs disabled:opacity-40"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            Next →
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
