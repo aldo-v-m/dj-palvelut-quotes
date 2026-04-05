@@ -33,7 +33,7 @@ export async function createAnalyticsSession(fields) {
     const records = await b('Analytics').create([{ fields }])
     return { id: records[0].id }
   } catch (err) {
-    console.warn('Analytics create failed:', err)
+    console.error('Analytics create failed:', err)
     return null
   }
 }
@@ -41,10 +41,11 @@ export async function createAnalyticsSession(fields) {
 export async function updateAnalyticsSession(recordId, fields) {
   const b = getBase()
   if (!b) return
+  if (!recordId) return
   try {
     await b('Analytics').update(recordId, fields)
   } catch (err) {
-    console.warn('Analytics update failed:', err)
+    console.error('Analytics update failed:', err)
   }
 }
 
@@ -54,13 +55,13 @@ export async function fetchAnalyticsSessions() {
   const records = []
   try {
     await b('Analytics')
-      .select({ sort: [{ field: 'startedAt', direction: 'desc' }] })
+      .select({ maxRecords: 500, sort: [{ field: 'startedAt', direction: 'desc' }] })
       .eachPage((page, fetchNext) => {
         page.forEach((r) => records.push({ id: r.id, ...r.fields }))
-        if (records.length < 500) fetchNext()
+        fetchNext()
       })
   } catch (err) {
-    console.warn('Analytics fetch failed:', err)
+    console.error('Analytics fetch failed:', err)
   }
   return records
 }
