@@ -59,7 +59,7 @@ export async function updateSession(currentStep, snapshot = {}) {
   if (!ts[String(currentStep)]) ts[String(currentStep)] = new Date().toISOString()
   const stepTimestamps = JSON.stringify(ts)
 
-  const furthestStep = Math.max(currentStep, prevStep)
+  const furthestStep = Math.max(currentStep, ...Object.keys(ts).map(Number))
 
   const patch = {
     updatedAt: new Date().toISOString(),
@@ -69,7 +69,7 @@ export async function updateSession(currentStep, snapshot = {}) {
     ...(snapshot.language                                      && { language:         snapshot.language }),
     ...(snapshot.eventType                                     && { eventType:         snapshot.eventType }),
     ...(snapshot.eventDate                                     && { eventDate:         snapshot.eventDate }),
-    ...(snapshot.guestCount                                    && { guestCount:        snapshot.guestCount }),
+    ...(snapshot.guestCount != null                            && { guestCount:        snapshot.guestCount }),
     ...(snapshot.location                                      && { location:          snapshot.location }),
     ...(snapshot.distanceKm != null                            && { distanceKm:        snapshot.distanceKm }),
     ...(snapshot.selectedServices?.length                      && { selectedServices:  snapshot.selectedServices.join(', ') }),
