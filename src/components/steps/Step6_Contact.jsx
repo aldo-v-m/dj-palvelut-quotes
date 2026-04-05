@@ -9,6 +9,7 @@ import useQuoteStore from '../../store/quoteStore'
 import { useQuoteCalculator } from '../../hooks/useQuoteCalculator'
 import { saveQuoteToAirtable } from '../../utils/airtable'
 import { trackLeadSubmitted } from '../../utils/analytics'
+import { completeSession } from '../../utils/analyticsTracker'
 
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -122,6 +123,7 @@ export default function Step6_Contact() {
         eventType: store.eventDetails.eventType,
         quoteId: store.quoteId
       })
+      completeSession() // fire-and-forget, non-blocking
       await saveQuoteToAirtable(airtableRecord)
       sendWhatsApp()
       store.setSubmitted(true)
