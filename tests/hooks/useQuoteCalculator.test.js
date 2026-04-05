@@ -50,7 +50,7 @@ describe('useQuoteCalculator', () => {
     it('handles fractional extra hours correctly', () => {
       setup({ services: ['dj'], durationHours: 5.5 })
       const { result } = renderHook(() => useQuoteCalculator())
-      expect(result.current.total).toBe(475) // 450 + 0.5 × 50
+      expect(result.current.total).toBe(500) // 450 + tier_prices[0]=50 (5.5h ceils to 6h → 1 extra tier)
     })
   })
 

@@ -64,6 +64,55 @@ export function computeHighestFriction(stepData) {
   }, {})
 }
 
+// ── Mock data (shown when Airtable table is empty) ────────────────────────────
+
+const _D = (daysAgo, hOffset = 0) => new Date(Date.now() - daysAgo * 86400000 - hOffset * 3600000).toISOString()
+const _TS = (base, ...stepSecs) => {
+  const t = new Date(base).getTime()
+  let off = 0
+  return JSON.stringify(Object.fromEntries(stepSecs.map((s, i) => { off += s * 1000; return [String(i), new Date(t + off).toISOString()] })))
+}
+
+const MOCK_SESSIONS = [
+  // Converted leads
+  { id:'m1',  startedAt:_D(2),   language:'fi', furthestStep:6, converted:true,  eventType:'wedding',     guestCount:120, location:'Helsinki',  distanceKm:8,  selectedServices:'dj, audio, lighting', quoteTotal:1650, quoteId:'DJP-001', backNavigations:1, stepTimestamps:_TS(_D(2),5,40,55,90,120,60,45) },
+  { id:'m2',  startedAt:_D(4),   language:'fi', furthestStep:6, converted:true,  eventType:'corporate',   guestCount:80,  location:'Espoo',     distanceKm:18, selectedServices:'dj, audio',           quoteTotal:980,  quoteId:'DJP-002', backNavigations:0, stepTimestamps:_TS(_D(4),8,35,48,75,95,55,30) },
+  { id:'m3',  startedAt:_D(6),   language:'en', furthestStep:6, converted:true,  eventType:'birthday',    guestCount:60,  location:'Tampere',   distanceKm:45, selectedServices:'dj, lighting',        quoteTotal:820,  quoteId:'DJP-003', backNavigations:2, stepTimestamps:_TS(_D(6),6,42,60,85,110,70,40) },
+  { id:'m4',  startedAt:_D(8),   language:'fi', furthestStep:6, converted:true,  eventType:'wedding',     guestCount:150, location:'Turku',     distanceKm:55, selectedServices:'dj, audio, lighting', quoteTotal:1920, quoteId:'DJP-004', backNavigations:1, stepTimestamps:_TS(_D(8),4,38,52,80,100,65,35) },
+  { id:'m5',  startedAt:_D(11),  language:'fi', furthestStep:6, converted:true,  eventType:'graduation',  guestCount:45,  location:'Vantaa',    distanceKm:12, selectedServices:'dj',                  quoteTotal:560,  quoteId:'DJP-005', backNavigations:0, stepTimestamps:_TS(_D(11),7,30,45,65,85,50,25) },
+  { id:'m6',  startedAt:_D(15),  language:'en', furthestStep:6, converted:true,  eventType:'corporate',   guestCount:200, location:'Helsinki',  distanceKm:5,  selectedServices:'dj, audio',           quoteTotal:1100, quoteId:'DJP-006', backNavigations:1, stepTimestamps:_TS(_D(15),5,33,50,70,90,60,28) },
+  { id:'m7',  startedAt:_D(19),  language:'fi', furthestStep:6, converted:true,  eventType:'wedding',     guestCount:100, location:'Oulu',      distanceKm:90, selectedServices:'dj, audio, lighting', quoteTotal:1780, quoteId:'DJP-007', backNavigations:0, stepTimestamps:_TS(_D(19),6,36,55,78,105,68,38) },
+  // Reached quote step, didn't convert
+  { id:'m8',  startedAt:_D(1),   language:'fi', furthestStep:5, converted:false, eventType:'birthday',    guestCount:70,  location:'Helsinki',  distanceKm:10, selectedServices:'dj, audio',           quoteTotal:870,  backNavigations:2, stepTimestamps:_TS(_D(1),5,38,55,82,108,62) },
+  { id:'m9',  startedAt:_D(3),   language:'en', furthestStep:5, converted:false, eventType:'corporate',   guestCount:90,  location:'Espoo',     distanceKm:20, selectedServices:'dj',                  quoteTotal:510,  backNavigations:1, stepTimestamps:_TS(_D(3),7,40,58,88,115,72) },
+  { id:'m10', startedAt:_D(7),   language:'fi', furthestStep:5, converted:false, eventType:'wedding',     guestCount:130, location:'Tampere',   distanceKm:50, selectedServices:'dj, lighting',        quoteTotal:990,  backNavigations:0, stepTimestamps:_TS(_D(7),6,35,50,75,100,68) },
+  // Dropped at contact
+  { id:'m11', startedAt:_D(5),   language:'fi', furthestStep:6, converted:false, eventType:'birthday',    guestCount:50,  location:'Helsinki',  distanceKm:7,  selectedServices:'dj',                  quoteTotal:490,  backNavigations:1, stepTimestamps:_TS(_D(5),8,42,60,90,120,75,0) },
+  { id:'m12', startedAt:_D(9),   language:'en', furthestStep:6, converted:false, eventType:'graduation',  guestCount:35,  location:'Vantaa',    distanceKm:15, selectedServices:'dj, audio',           quoteTotal:680,  backNavigations:0, stepTimestamps:_TS(_D(9),5,30,48,72,95,58,0) },
+  // Dropped at customization (step 4)
+  { id:'m13', startedAt:_D(2,3), language:'fi', furthestStep:4, converted:false, eventType:'corporate',   guestCount:110, location:'Helsinki',  distanceKm:3,  selectedServices:'dj, audio',           backNavigations:3, stepTimestamps:_TS(_D(2,3),6,38,55,88,130) },
+  { id:'m14', startedAt:_D(3,5), language:'fi', furthestStep:4, converted:false, eventType:'wedding',     guestCount:80,  location:'Espoo',     distanceKm:22, selectedServices:'dj, lighting',        backNavigations:1, stepTimestamps:_TS(_D(3,5),5,35,52,78,110) },
+  { id:'m15', startedAt:_D(5,2), language:'en', furthestStep:4, converted:false, eventType:'birthday',    guestCount:40,  location:'Turku',     distanceKm:60, selectedServices:'dj',                  backNavigations:2, stepTimestamps:_TS(_D(5,2),7,40,58,82,125) },
+  { id:'m16', startedAt:_D(10),  language:'fi', furthestStep:4, converted:false, eventType:'graduation',  guestCount:60,  location:'Tampere',   distanceKm:48, selectedServices:'dj, audio, lighting', backNavigations:0, stepTimestamps:_TS(_D(10),6,33,50,75,105) },
+  { id:'m17', startedAt:_D(14),  language:'fi', furthestStep:4, converted:false, eventType:'corporate',   guestCount:150, location:'Helsinki',  distanceKm:8,  selectedServices:'dj, audio',           backNavigations:4, stepTimestamps:_TS(_D(14),5,37,55,80,120) },
+  // Dropped at services (step 3)
+  { id:'m18', startedAt:_D(1,2), language:'fi', furthestStep:3, converted:false, eventType:'birthday',    guestCount:30,  location:'Helsinki',  distanceKm:5,  backNavigations:1, stepTimestamps:_TS(_D(1,2),8,42,65,95) },
+  { id:'m19', startedAt:_D(4,4), language:'en', furthestStep:3, converted:false, eventType:'wedding',     guestCount:90,  location:'Espoo',     distanceKm:25, backNavigations:0, stepTimestamps:_TS(_D(4,4),6,38,58,88) },
+  { id:'m20', startedAt:_D(6,1), language:'fi', furthestStep:3, converted:false, eventType:'corporate',   guestCount:60,  location:'Vantaa',    distanceKm:14, backNavigations:2, stepTimestamps:_TS(_D(6,1),7,40,62,92) },
+  { id:'m21', startedAt:_D(12),  language:'fi', furthestStep:3, converted:false, eventType:'graduation',  guestCount:45,  location:'Tampere',   distanceKm:52, backNavigations:0, stepTimestamps:_TS(_D(12),5,35,55,85) },
+  { id:'m22', startedAt:_D(16),  language:'en', furthestStep:3, converted:false, eventType:'birthday',    guestCount:55,  location:'Turku',     distanceKm:58, backNavigations:1, stepTimestamps:_TS(_D(16),6,32,50,78) },
+  { id:'m23', startedAt:_D(20),  language:'fi', furthestStep:3, converted:false, eventType:'wedding',     guestCount:70,  location:'Helsinki',  distanceKm:10, backNavigations:0, stepTimestamps:_TS(_D(20),7,38,60,90) },
+  // Dropped at location (step 2)
+  { id:'m24', startedAt:_D(2,6), language:'fi', furthestStep:2, converted:false, eventType:'corporate',   guestCount:100, backNavigations:1, stepTimestamps:_TS(_D(2,6),6,40,65) },
+  { id:'m25', startedAt:_D(7,3), language:'fi', furthestStep:2, converted:false, eventType:'birthday',    guestCount:25,  backNavigations:0, stepTimestamps:_TS(_D(7,3),5,35,55) },
+  { id:'m26', startedAt:_D(13),  language:'en', furthestStep:2, converted:false, eventType:'wedding',     guestCount:80,  backNavigations:2, stepTimestamps:_TS(_D(13),7,42,68) },
+  { id:'m27', startedAt:_D(18),  language:'fi', furthestStep:2, converted:false, eventType:'graduation',  guestCount:40,  backNavigations:0, stepTimestamps:_TS(_D(18),6,38,60) },
+  // Dropped early (step 1)
+  { id:'m28', startedAt:_D(3,2), language:'fi', furthestStep:1, converted:false, eventType:'birthday',    backNavigations:0, stepTimestamps:_TS(_D(3,2),8,45) },
+  { id:'m29', startedAt:_D(9,4), language:'en', furthestStep:1, converted:false, eventType:'corporate',   backNavigations:0, stepTimestamps:_TS(_D(9,4),5,38) },
+  { id:'m30', startedAt:_D(22),  language:'fi', furthestStep:1, converted:false, eventType:'wedding',     backNavigations:0, stepTimestamps:_TS(_D(22),6,40) },
+]
+
 // ── Subcomponents ─────────────────────────────────────────────────────────────
 
 function Card({ icon: Icon, label, value, sub }) {
@@ -316,7 +365,9 @@ export default function AnalyticsTab() {
 
   useEffect(load, [])
 
-  const sessions  = useMemo(() => filterByDateRange(allSessions, dateRange), [allSessions, dateRange])
+  const isMock    = !loading && allSessions.length === 0
+  const source    = isMock ? MOCK_SESSIONS : allSessions
+  const sessions  = useMemo(() => filterByDateRange(source, dateRange), [source, dateRange])
   const stepData  = useMemo(() => computeStepData(sessions), [sessions])
   const friction  = useMemo(() => computeHighestFriction(stepData), [stepData])
   const convRate  = computeConversionRate(sessions)
@@ -344,6 +395,14 @@ export default function AnalyticsTab() {
 
   return (
     <div className="space-y-5 pb-8">
+      {/* Demo data banner */}
+      {isMock && (
+        <div className="px-3 py-2 rounded-lg text-xs flex items-center gap-2" style={{ backgroundColor: 'rgba(232,184,75,0.1)', border: '1px solid rgba(232,184,75,0.3)', color: 'var(--color-accent)' }}>
+          <span>⚗️</span>
+          <span>Demo data — no real sessions yet. This preview disappears once users start the quote flow.</span>
+        </div>
+      )}
+
       {/* Date range filter */}
       <div className="flex gap-1">
         {DATE_OPTIONS.map(({ label, value }) => (
