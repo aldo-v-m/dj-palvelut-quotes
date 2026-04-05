@@ -54,12 +54,17 @@ export async function fetchAnalyticsSessions() {
   if (!b) return []
   const records = []
   try {
-    await b('Analytics')
-      .select({ maxRecords: 500, sort: [{ field: 'startedAt', direction: 'desc' }] })
-      .eachPage((page, fetchNext) => {
-        page.forEach((r) => records.push({ id: r.id, ...r.fields }))
-        fetchNext()
-      })
+    await new Promise((resolve, reject) => {
+      b('Analytics')
+        .select({ maxRecords: 500, sort: [{ field: 'startedAt', direction: 'desc' }] })
+        .eachPage(
+          (page, fetchNext) => {
+            page.forEach((r) => records.push({ id: r.id, ...r.fields }))
+            fetchNext()
+          },
+          (err) => { if (err) reject(err); else resolve() }
+        )
+    })
   } catch (err) {
     console.error('Analytics fetch failed:', err)
   }

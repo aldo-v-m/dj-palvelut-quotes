@@ -24,12 +24,15 @@ export function computeAvgQuote(sessions) {
 }
 
 export function computeStepData(sessions) {
-  const total = sessions.length
+  const total      = sessions.length
+  const step1Count = sessions.filter((s) => (s.furthestStep ?? 0) >= 1).length
+  const baseline   = step1Count > 0 ? step1Count : (total > 0 ? total : 1)
+
   return STEP_NAMES.map((name, i) => {
     const reached     = sessions.filter((s) => (s.furthestStep ?? 0) >= i).length
     const droppedHere = sessions.filter((s) => (s.furthestStep ?? 0) === i).length
     const dropOffRate = total > 0 ? droppedHere / total : 0
-    const reachedPct  = total > 0 ? reached / total : 0
+    const reachedPct  = reached / baseline
 
     const timings = sessions.flatMap((s) => {
       try {
