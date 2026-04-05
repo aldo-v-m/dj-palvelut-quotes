@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { RotateCcw } from 'lucide-react'
 import useQuoteStore from './store/quoteStore'
+import { useQuoteCalculator } from './hooks/useQuoteCalculator'
 import StepIndicator from './components/Layout/StepIndicator'
 import LanguageToggle from './components/Layout/LanguageToggle'
 import ProgressBar from './components/Layout/ProgressBar'
@@ -16,6 +17,7 @@ import Step6_Contact from './components/steps/Step6_Contact'
 import AdminPanel from './components/AdminPanel'
 import QuickContact from './components/QuickContact'
 import { trackStepView } from './utils/analytics'
+import { initSession, updateSession } from './utils/analyticsTracker'
 
 const STEPS = [
   Step0_Language,
@@ -37,6 +39,7 @@ const SPRING = { type: 'spring', stiffness: 300, damping: 30 }
 
 export default function App() {
   const { currentStep, language, restoreState, resetState } = useQuoteStore()
+  const quote = useQuoteCalculator()
   const [direction, setDirection] = React.useState(1)
   const prevStepRef = useRef(currentStep)
   const [isAdmin, setIsAdmin] = useState(window.location.hash === '#admin')
@@ -81,11 +84,30 @@ export default function App() {
     }
   }, [])
 
-  // Track direction for slide animation + GA step view
+  // Track direction for slide animation + GA step view + analytics
   useEffect(() => {
     setDirection(currentStep > prevStepRef.current ? 1 : -1)
     prevStepRef.current = currentStep
     trackStepView(currentStep)
+
+    const s = useQuoteStore.getState()
+    const snapshot = {
+      language:         s.language,
+      eventType:        s.eventDetails.eventType,
+      eventDate:        s.eventDetails.date,
+      guestCount:       s.eventDetails.guestCount,
+      location:         s.location.address,
+      distanceKm:       s.location.distanceKm,
+      selectedServices: s.selectedServices,
+      quoteTotal:       quote.total,
+      quoteId:          s.quoteId,
+    }
+
+    if (currentStep === 1) {
+      initSession(s.language)
+    } else {
+      updateSession(currentStep, snapshot)
+    }
   }, [currentStep])
 
   // Auto-resize for Squarespace iframe embed
