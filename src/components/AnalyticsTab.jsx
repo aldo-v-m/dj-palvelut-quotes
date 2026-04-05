@@ -77,8 +77,89 @@ function Card({ icon: Icon, label, value, sub }) {
 }
 
 // Stubs — replaced in Tasks 7 and 8
-function FunnelChart() { return null }
-function ResistanceChart() { return null }
+function FunnelChart({ stepData, frictionIndex, total }) {
+  if (!total) return null
+  return (
+    <div className="rounded-xl p-4 space-y-3" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-accent)' }}>
+        Funnel Drop-off
+      </h3>
+      <div className="space-y-2">
+        {stepData.map(({ index, name, reached, reachedPct, droppedHere }) => (
+          <div key={index}>
+            <div className="flex items-center justify-between text-xs mb-1">
+              <span className="flex items-center gap-1.5" style={{ color: 'var(--color-text)' }}>
+                {index === frictionIndex && <AlertTriangle size={11} style={{ color: 'var(--color-accent)' }} />}
+                <span className="text-[var(--color-text-muted)]">Step {index}</span> {name}
+              </span>
+              <span style={{ color: 'var(--color-text-muted)' }}>
+                {reached} <span className="opacity-60">({Math.round(reachedPct * 100)}%)</span>
+              </span>
+            </div>
+            <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${Math.round(reachedPct * 100)}%`,
+                  backgroundColor: index === frictionIndex ? 'var(--color-accent)' : 'var(--color-accent-2)',
+                }}
+              />
+            </div>
+            {droppedHere > 0 && (
+              <p className="text-[10px] mt-0.5" style={{ color: 'rgba(255,100,100,0.7)' }}>
+                ↗ {droppedHere} left here
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function formatMs(ms) {
+  if (ms == null) return null
+  if (ms < 60000) return `${Math.round(ms / 1000)}s`
+  return `${Math.floor(ms / 60000)}m ${Math.round((ms % 60000) / 1000)}s`
+}
+
+function ResistanceChart({ stepData }) {
+  const withTime = stepData.filter((s) => s.avgTime != null)
+  if (!withTime.length) return null
+  const maxTime = Math.max(...withTime.map((s) => s.avgTime))
+
+  return (
+    <div className="rounded-xl p-4 space-y-3" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+      <h3 className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-accent)' }}>
+        Avg Time per Step
+      </h3>
+      <div className="space-y-2">
+        {stepData.slice(0, 6).map(({ index, name, avgTime, timings }) => (
+          <div key={index}>
+            <div className="flex items-center justify-between text-xs mb-1">
+              <span style={{ color: 'var(--color-text)' }}>{name}</span>
+              <span style={{ color: 'var(--color-text-muted)' }}>
+                {timings.length < 3 ? 'insufficient data' : formatMs(avgTime)}
+              </span>
+            </div>
+            {timings.length >= 3 && (
+              <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}>
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${Math.round((avgTime / maxTime) * 100)}%`,
+                    backgroundColor: avgTime === maxTime ? 'var(--color-accent)' : 'var(--color-accent-2)',
+                    opacity: 0.8,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 function Breakdowns() { return null }
 function SessionTable() { return null }
 
