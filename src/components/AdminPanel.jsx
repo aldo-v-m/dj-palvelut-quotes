@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Lock, Save, RotateCcw, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import usePricingStore from '../store/pricingStore'
 import defaultPricing from '../config/pricing.json'
+import AnalyticsTab from './AnalyticsTab'
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'djadmin2024'
 
@@ -39,6 +40,7 @@ export default function AdminPanel() {
   const [saved, setSaved] = useState(false)
   const { pricing, setPricing, resetPricing, isOverridden } = usePricingStore()
   const [draft, setDraft] = useState(() => JSON.parse(JSON.stringify(pricing)))
+  const [activeTab, setActiveTab] = useState('pricing')
 
   const login = () => {
     if (password === ADMIN_PASSWORD) { setAuthed(true); setPwError(false) }
@@ -124,119 +126,142 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen px-4 py-6 space-y-5" style={{ backgroundColor: 'var(--color-bg)' }}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--color-text)]">Pricing Admin</h1>
-          <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
-            {isOverridden() ? '⚡ Using custom pricing (localStorage)' : '📋 Using default pricing'}
-          </p>
-        </div>
-        <div className="flex gap-2">
+      {/* Tab bar */}
+      <div className="flex gap-1 p-1 rounded-xl" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+        {['pricing', 'analytics'].map((tab) => (
           <button
-            onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className="flex-1 py-2 rounded-lg text-sm font-semibold capitalize transition-all"
+            style={activeTab === tab
+              ? { backgroundColor: 'var(--color-accent)', color: '#0a130c' }
+              : { color: 'var(--color-text-muted)' }
+            }
           >
-            <RotateCcw size={13} /> Reset
+            {tab}
           </button>
-          <button
-            onClick={handleSave}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold"
-            style={{ backgroundColor: saved ? 'var(--color-success)' : 'var(--color-accent)', color: '#0a130c' }}
-          >
-            {saved ? <><CheckCircle size={13} /> Saved!</> : <><Save size={13} /> Save</>}
-          </button>
-        </div>
+        ))}
       </div>
 
-      <Section title="General">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="VAT Rate (e.g. 0.135 = 13.5%)" value={d.vat_rate} onChange={(v) => update('vat_rate', v)} step="0.001" />
-        </div>
-      </Section>
+      {activeTab === 'pricing' && (
+        <>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--color-text)]">Pricing Admin</h1>
+              <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                {isOverridden() ? '⚡ Using custom pricing (localStorage)' : '📋 Using default pricing'}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleReset}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+              >
+                <RotateCcw size={13} /> Reset
+              </button>
+              <button
+                onClick={handleSave}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold"
+                style={{ backgroundColor: saved ? 'var(--color-success)' : 'var(--color-accent)', color: '#0a130c' }}
+              >
+                {saved ? <><CheckCircle size={13} /> Saved!</> : <><Save size={13} /> Save</>}
+              </button>
+            </div>
+          </div>
 
-      <Section title="Travel">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Free zone (km)" value={d.travel.free_km} onChange={(v) => update('travel.free_km', v)} step="1" />
-          <Field label="Rate per km one way (€)" value={d.travel.rate_per_km_one_way} onChange={(v) => update('travel.rate_per_km_one_way', v)} />
-          <Field label="Out of range limit (km)" value={d.travel.out_of_range_km} onChange={(v) => update('travel.out_of_range_km', v)} step="1" />
-        </div>
-      </Section>
+          <Section title="General">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="VAT Rate (e.g. 0.135 = 13.5%)" value={d.vat_rate} onChange={(v) => update('vat_rate', v)} step="0.001" />
+            </div>
+          </Section>
 
-      <Section title="Package Discounts">
-        <div className="grid grid-cols-3 gap-3">
-          <Field label="2 services (e.g. 0.05 = 5%)" value={d.package_discounts.two_services} onChange={(v) => update('package_discounts.two_services', v)} step="0.01" />
-          <Field label="3 services" value={d.package_discounts.three_services} onChange={(v) => update('package_discounts.three_services', v)} step="0.01" />
-          <Field label="4 services" value={d.package_discounts.four_services} onChange={(v) => update('package_discounts.four_services', v)} step="0.01" />
-        </div>
-      </Section>
+          <Section title="Travel">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Free zone (km)" value={d.travel.free_km} onChange={(v) => update('travel.free_km', v)} step="1" />
+              <Field label="Rate per km one way (€)" value={d.travel.rate_per_km_one_way} onChange={(v) => update('travel.rate_per_km_one_way', v)} />
+              <Field label="Out of range limit (km)" value={d.travel.out_of_range_km} onChange={(v) => update('travel.out_of_range_km', v)} step="1" />
+            </div>
+          </Section>
 
-      <Section title="Surcharges">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="High season rate (e.g. 0.15)" value={d.surcharges.high_season} onChange={(v) => update('surcharges.high_season', v)} step="0.01" />
-          <Field label="Last-minute rate (e.g. 0.15)" value={d.surcharges.last_minute} onChange={(v) => update('surcharges.last_minute', v)} step="0.01" />
-          <Field label="Last-minute window (days)" value={d.surcharges.last_minute_days} onChange={(v) => update('surcharges.last_minute_days', v)} step="1" />
-        </div>
-      </Section>
+          <Section title="Package Discounts">
+            <div className="grid grid-cols-3 gap-3">
+              <Field label="2 services (e.g. 0.05 = 5%)" value={d.package_discounts.two_services} onChange={(v) => update('package_discounts.two_services', v)} step="0.01" />
+              <Field label="3 services" value={d.package_discounts.three_services} onChange={(v) => update('package_discounts.three_services', v)} step="0.01" />
+              <Field label="4 services" value={d.package_discounts.four_services} onChange={(v) => update('package_discounts.four_services', v)} step="0.01" />
+            </div>
+          </Section>
 
-      <Section title="DJ Service">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Base price (€) — includes min hours" value={d.services.dj.base_price} onChange={(v) => update('services.dj.base_price', v)} step="1" />
-          <Field label="Included hours (free)" value={d.services.dj.min_hours} onChange={(v) => update('services.dj.min_hours', v)} step="1" />
-          <Field label="Overflow rate per hour (€)" value={d.services.dj.hourly_rate} onChange={(v) => update('services.dj.hourly_rate', v)} step="1" />
-        </div>
-        <p className="text-xs text-[var(--color-text-muted)] pt-1">Extra hours pricing (on top of base, after included hours)</p>
-        <div className="grid grid-cols-3 gap-3">
-          {d.services.dj.tier_prices.map((price, i) => (
-            <Field key={i} label={tierLabels[i]} value={price} onChange={(v) => updateTierPrice(i, v)} step="1" />
-          ))}
-        </div>
-      </Section>
+          <Section title="Surcharges">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="High season rate (e.g. 0.15)" value={d.surcharges.high_season} onChange={(v) => update('surcharges.high_season', v)} step="0.01" />
+              <Field label="Last-minute rate (e.g. 0.15)" value={d.surcharges.last_minute} onChange={(v) => update('surcharges.last_minute', v)} step="0.01" />
+              <Field label="Last-minute window (days)" value={d.surcharges.last_minute_days} onChange={(v) => update('surcharges.last_minute_days', v)} step="1" />
+            </div>
+          </Section>
 
-      <Section title="Audio Service">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Base price (€)" value={d.services.audio.base_price} onChange={(v) => update('services.audio.base_price', v)} step="1" />
-          <Field label="Hourly rate (€)" value={d.services.audio.hourly_rate} onChange={(v) => update('services.audio.hourly_rate', v)} step="1" />
-          <Field label="Min hours" value={d.services.audio.min_hours} onChange={(v) => update('services.audio.min_hours', v)} step="1" />
-        </div>
-        <p className="text-xs text-[var(--color-text-muted)] pt-1">Audio Add-ons</p>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="2x Subwoofers (€)" value={d.services.audio.addons.extra_sub.price} onChange={(v) => update('services.audio.addons.extra_sub.price', v)} step="1" />
-          <Field label="Extra Speakers (€ each)" value={d.services.audio.addons.extra_speakers.price} onChange={(v) => update('services.audio.addons.extra_speakers.price', v)} step="1" />
-        </div>
-      </Section>
+          <Section title="DJ Service">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Base price (€) — includes min hours" value={d.services.dj.base_price} onChange={(v) => update('services.dj.base_price', v)} step="1" />
+              <Field label="Included hours (free)" value={d.services.dj.min_hours} onChange={(v) => update('services.dj.min_hours', v)} step="1" />
+              <Field label="Overflow rate per hour (€)" value={d.services.dj.hourly_rate} onChange={(v) => update('services.dj.hourly_rate', v)} step="1" />
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] pt-1">Extra hours pricing (on top of base, after included hours)</p>
+            <div className="grid grid-cols-3 gap-3">
+              {d.services.dj.tier_prices.map((price, i) => (
+                <Field key={i} label={tierLabels[i]} value={price} onChange={(v) => updateTierPrice(i, v)} step="1" />
+              ))}
+            </div>
+          </Section>
 
-      <Section title="Lighting Service">
-        <p className="text-xs text-[var(--color-text-muted)]">Add-ons</p>
-        <div className="grid grid-cols-3 gap-3">
-          <Field label="LED Lights (€)" value={d.services.lighting.addons.led_lights.price} onChange={(v) => update('services.lighting.addons.led_lights.price', v)} step="1" />
-          <Field label="Ambient Lighting (€)" value={d.services.lighting.addons.ambient_lighting.price} onChange={(v) => update('services.lighting.addons.ambient_lighting.price', v)} step="1" />
-          <Field label="Smoke Machine (€)" value={d.services.lighting.addons.smoke_machine.price} onChange={(v) => update('services.lighting.addons.smoke_machine.price', v)} step="1" />
-        </div>
-      </Section>
+          <Section title="Audio Service">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Base price (€)" value={d.services.audio.base_price} onChange={(v) => update('services.audio.base_price', v)} step="1" />
+              <Field label="Hourly rate (€)" value={d.services.audio.hourly_rate} onChange={(v) => update('services.audio.hourly_rate', v)} step="1" />
+              <Field label="Min hours" value={d.services.audio.min_hours} onChange={(v) => update('services.audio.min_hours', v)} step="1" />
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] pt-1">Audio Add-ons</p>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="2x Subwoofers (€)" value={d.services.audio.addons.extra_sub.price} onChange={(v) => update('services.audio.addons.extra_sub.price', v)} step="1" />
+              <Field label="Extra Speakers (€ each)" value={d.services.audio.addons.extra_speakers.price} onChange={(v) => update('services.audio.addons.extra_speakers.price', v)} step="1" />
+            </div>
+          </Section>
 
-      <Section title="Karaoke (Special FX)">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Base price (€)" value={d.services.special_fx.base_price} onChange={(v) => update('services.special_fx.base_price', v)} step="1" />
-        </div>
-      </Section>
+          <Section title="Lighting Service">
+            <p className="text-xs text-[var(--color-text-muted)]">Add-ons</p>
+            <div className="grid grid-cols-3 gap-3">
+              <Field label="LED Lights (€)" value={d.services.lighting.addons.led_lights.price} onChange={(v) => update('services.lighting.addons.led_lights.price', v)} step="1" />
+              <Field label="Ambient Lighting (€)" value={d.services.lighting.addons.ambient_lighting.price} onChange={(v) => update('services.lighting.addons.ambient_lighting.price', v)} step="1" />
+              <Field label="Smoke Machine (€)" value={d.services.lighting.addons.smoke_machine.price} onChange={(v) => update('services.lighting.addons.smoke_machine.price', v)} step="1" />
+            </div>
+          </Section>
 
-      <Section title="Special Extras">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="Titis Magic (€/dancer)" value={d.services.extras.addons.titis_magic.price} onChange={(v) => update('services.extras.addons.titis_magic.price', v)} step="1" />
-          <Field label="Custom Stage (€)" value={d.services.extras.addons.custom_stage.price} onChange={(v) => update('services.extras.addons.custom_stage.price', v)} step="1" />
-        </div>
-      </Section>
+          <Section title="Karaoke (Special FX)">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Base price (€)" value={d.services.special_fx.base_price} onChange={(v) => update('services.special_fx.base_price', v)} step="1" />
+            </div>
+          </Section>
 
-      <div className="pb-8">
-        <button
-          onClick={handleSave}
-          className="w-full py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"
-          style={{ backgroundColor: saved ? 'var(--color-success)' : 'var(--color-accent)', color: '#0a130c' }}
-        >
-          {saved ? <><CheckCircle size={16} /> Saved!</> : <><Save size={16} /> Save All Changes</>}
-        </button>
-        <p className="text-xs text-center text-[var(--color-text-muted)] mt-2">Changes apply immediately — no redeploy needed</p>
-      </div>
+          <Section title="Special Extras">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Titis Magic (€/dancer)" value={d.services.extras.addons.titis_magic.price} onChange={(v) => update('services.extras.addons.titis_magic.price', v)} step="1" />
+              <Field label="Custom Stage (€)" value={d.services.extras.addons.custom_stage.price} onChange={(v) => update('services.extras.addons.custom_stage.price', v)} step="1" />
+            </div>
+          </Section>
+
+          <div className="pb-8">
+            <button
+              onClick={handleSave}
+              className="w-full py-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"
+              style={{ backgroundColor: saved ? 'var(--color-success)' : 'var(--color-accent)', color: '#0a130c' }}
+            >
+              {saved ? <><CheckCircle size={16} /> Saved!</> : <><Save size={16} /> Save All Changes</>}
+            </button>
+            <p className="text-xs text-center text-[var(--color-text-muted)] mt-2">Changes apply immediately — no redeploy needed</p>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'analytics' && <AnalyticsTab />}
     </div>
   )
 }
