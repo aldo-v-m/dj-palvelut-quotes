@@ -1,7 +1,7 @@
 import React from 'react'
 import useQuoteStore from '../../store/quoteStore'
 
-const STEPS = 7
+const STEPS = 5
 
 export default function StepIndicator() {
   const currentStep = useQuoteStore((s) => s.currentStep)

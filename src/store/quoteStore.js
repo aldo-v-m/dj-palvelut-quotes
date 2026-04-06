@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 const INITIAL_STATE = {
-  language: 'en',
+  language: 'fi',
   currentStep: 0,
   eventDetails: {
     date: null,
@@ -45,7 +45,7 @@ const useQuoteStore = create(
 
       setLanguage: (language) => set({ language }),
       setCurrentStep: (step) => set({ currentStep: step }),
-      nextStep: () => set((s) => ({ currentStep: Math.min(s.currentStep + 1, 6) })),
+      nextStep: () => set((s) => ({ currentStep: Math.min(s.currentStep + 1, 4) })),
       prevStep: () => set((s) => ({ currentStep: Math.max(s.currentStep - 1, 0) })),
       goToStep: (step) => set({ currentStep: step }),
 

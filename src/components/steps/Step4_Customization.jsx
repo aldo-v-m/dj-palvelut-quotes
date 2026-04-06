@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Check, Users, Layers } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useQuoteStore from '../../store/quoteStore'
+import usePricingStore from '../../store/pricingStore'
 import pricing from '../../config/pricing.json'
 
 const LIGHTING_ADDONS = [
@@ -14,7 +15,7 @@ const AUDIO_ADDONS = [
   { id: 'extra_speakers', emoji: '📢', price: 75 }
 ]
 
-function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked, onToggle, quantity, onQtyChange, showQty, maxQty }) {
+function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked, onToggle, quantity, onQtyChange, showQty, maxQty, hidePrice }) {
   return (
     <motion.div
       whileTap={{ scale: 0.98 }}
@@ -35,7 +36,7 @@ function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm font-medium text-[var(--color-text)]">{label}</span>
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-sm font-semibold text-[var(--color-accent)]">€{price}</span>
+            {!hidePrice && <span className="text-sm font-semibold text-[var(--color-accent)]">€{price}</span>}
             <div
               className="w-5 h-5 rounded flex items-center justify-center shrink-0"
               style={{ backgroundColor: checked ? 'var(--color-accent)' : 'var(--color-border)' }}
@@ -67,6 +68,8 @@ function AddonCard({ serviceId, addonId, emoji, price, per, label, desc, checked
 export default function Step4_Customization() {
   const { t, i18n } = useTranslation()
   const { selectedServices, addons, addonQuantities, toggleAddon, setAddonQuantity, nextStep, prevStep } = useQuoteStore()
+  const showSpecialExtras = usePricingStore((s) => s.showSpecialExtras)
+  const hidePricingDuringForm = usePricingStore((s) => s.hidePricingDuringForm)
   const lang = i18n.language
 
   const isChecked = (svcId, addonId) => (addons[svcId] || []).includes(addonId)
@@ -108,6 +111,7 @@ export default function Step4_Customization() {
               quantity={qty('lighting', id)}
               onQtyChange={(q) => setAddonQuantity('lighting', id, q)}
               showQty={false}
+              hidePrice={hidePricingDuringForm}
             />
           ))}
         </Section>
@@ -128,6 +132,7 @@ export default function Step4_Customization() {
             onQtyChange={(q) => setAddonQuantity('audio', 'extra_sub', q)}
             showQty={true}
             maxQty={4}
+            hidePrice={hidePricingDuringForm}
           />
           <AddonCard
             serviceId="audio"
@@ -144,11 +149,12 @@ export default function Step4_Customization() {
             onQtyChange={(q) => setAddonQuantity('audio', 'extra_speakers', q)}
             showQty={true}
             maxQty={8}
+            hidePrice={hidePricingDuringForm}
           />
         </Section>
       )}
 
-      <Section title={lang === 'fi' ? 'Erikoispalvelut' : 'Special Extras'}>
+      {showSpecialExtras && <Section title={lang === 'fi' ? 'Erikoispalvelut' : 'Special Extras'}>
         <AddonCard
           serviceId="extras"
           addonId="titis_magic"
@@ -164,6 +170,7 @@ export default function Step4_Customization() {
           onQtyChange={(q) => setAddonQuantity('extras', 'titis_magic', q)}
           showQty={true}
           maxQty={5}
+          hidePrice={hidePricingDuringForm}
         />
         <AddonCard
           serviceId="extras"
@@ -179,8 +186,9 @@ export default function Step4_Customization() {
           quantity={qty('extras', 'custom_stage')}
           onQtyChange={(q) => setAddonQuantity('extras', 'custom_stage', q)}
           showQty={false}
+          hidePrice={hidePricingDuringForm}
         />
-      </Section>
+      </Section>}
 
       <div className="flex gap-3">
         <button

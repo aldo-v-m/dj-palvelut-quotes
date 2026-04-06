@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Download, Share2, Check } from 'lucide-react'
+import { Download, Share2, Check, MessageCircle, CheckCircle } from 'lucide-react'
+import emailjs from 'emailjs-com'
 import useQuoteStore from '../../store/quoteStore'
 import { useQuoteCalculator } from '../../hooks/useQuoteCalculator'
 import QuoteLineItem from '../ui/QuoteLineItem'
 import QuoteExpiry from '../ui/QuoteExpiry'
 import { generateQuoteId, getQuoteExpiry } from '../../utils/quoteId'
 import { exportQuotePDF } from '../../utils/pdfExport'
-import { trackQuoteViewed } from '../../utils/analytics'
+import { trackQuoteViewed, trackLeadSubmitted } from '../../utils/analytics'
+import { saveQuoteToAirtable } from '../../utils/airtable'
+import { completeSession } from '../../utils/analyticsTracker'
 import services from '../../config/services.json'
 
 export default function Step5_Quote() {
@@ -15,6 +18,9 @@ export default function Step5_Quote() {
   const store = useQuoteStore()
   const quote = useQuoteCalculator()
   const [copied, setCopied] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const lang = i18n.language
 
   useEffect(() => {
@@ -39,7 +45,154 @@ export default function Step5_Quote() {
     })
   }
 
+  const handleSubmit = async () => {
+    setSubmitting(true)
+    setSubmitError('')
+    const data = store.contact
+
+    const serviceLabels = {
+      dj: 'DJ-palvelut', audio: 'Pro Äänentoisto', lighting: 'Valaistus',
+      special_fx: 'Karaoke', extras: 'Erikoispalvelut'
+    }
+    const servicesFormatted = store.selectedServices.map((id) => serviceLabels[id] || id).join(', ')
+    const discountPct = Math.round(quote.packageDiscountRate * 100)
+
+    const templateParams = {
+      quote_id: store.quoteId,
+      name: data.name,
+      email: data.email,
+      phone: data.phone || '-',
+      message: data.message || '-',
+      event_type: store.eventDetails.eventType,
+      event_date: store.eventDetails.date
+        ? new Date(store.eventDetails.date).toLocaleDateString('fi-FI') : '-',
+      duration: `${store.eventDetails.durationHours}h`,
+      guest_count: store.eventDetails.guestCount,
+      venue_name: store.location.address || '-',
+      address: store.location.address || '-',
+      distance_km: store.location.distanceKm ? `${store.location.distanceKm} km` : '-',
+      services: servicesFormatted,
+      subtotal: quote.servicesSubtotal.toFixed(2),
+      discount: discountPct > 0 ? `-${discountPct}% (−€${Math.abs(quote.packageDiscount).toFixed(2)})` : '-',
+      travel_fee: quote.travelFee > 0 ? `€${quote.travelFee.toFixed(2)}` : 'Maksuton',
+      total: quote.total.toFixed(2),
+      quote_url: `${window.location.origin}${window.location.pathname}`
+    }
+
+    const airtableRecord = {
+      QuoteID: store.quoteId,
+      Name: data.name,
+      Email: data.email,
+      Phone: data.phone || '',
+      EventDate: store.eventDetails.date,
+      EventType: store.eventDetails.eventType,
+      Duration: store.eventDetails.durationHours,
+      GuestCount: store.eventDetails.guestCount,
+      Venue: store.location.address || '',
+      Address: store.location.address || '',
+      DistanceKm: store.location.distanceKm || 0,
+      Services: store.selectedServices.join(', '),
+      Addons: JSON.stringify(store.addons),
+      TravelFee: quote.travelFee,
+      Subtotal: quote.subtotalBeforeVat,
+      VAT: quote.vatAmount,
+      Total: quote.totalWithVat,
+      Language: store.language,
+      AIRecommendation: store.aiRecommendation ? JSON.stringify(store.aiRecommendation) : '',
+      SubmittedAt: new Date().toISOString()
+    }
+
+    const sendWhatsApp = async () => {
+      const phone = import.meta.env.VITE_CALLMEBOT_PHONE
+      const apikey = import.meta.env.VITE_CALLMEBOT_APIKEY
+      if (!phone || !apikey) return
+      const msg = `New lead: ${data.name} | ${data.email} | ${store.eventDetails.eventType} | ${store.eventDetails.date} | Quote: €${quote.totalWithVat.toFixed(2)} | ID: ${store.quoteId}`
+      const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(msg)}&apikey=${apikey}`
+      try { await fetch(url) } catch { /* non-blocking */ }
+    }
+
+    try {
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_ytzdmr4'
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      if (serviceId && templateId && publicKey) {
+        try {
+          await emailjs.send(serviceId, templateId, templateParams, publicKey)
+        } catch (emailErr) {
+          console.error('EmailJS error:', emailErr)
+        }
+      }
+      trackLeadSubmitted({
+        total: quote.totalWithVat,
+        services: store.selectedServices,
+        eventType: store.eventDetails.eventType,
+        quoteId: store.quoteId
+      })
+      completeSession()
+      await saveQuoteToAirtable(airtableRecord)
+      sendWhatsApp()
+      store.setSubmitted(true)
+      setSuccess(true)
+    } catch (err) {
+      console.error('Submission error:', err)
+      setSubmitError(t('common.error'))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const fmt = (amount) => `€${Math.abs(amount).toFixed(2)}`
+
+  if (success) {
+    const whatsappNum = import.meta.env.VITE_COMPANY_WHATSAPP || '358401234567'
+    const waText = encodeURIComponent(`Hi, I'm interested in quote ${store.quoteId}`)
+    const waUrl = `https://wa.me/${whatsappNum}?text=${waText}`
+
+    return (
+      <div className="px-4 py-12 flex flex-col items-center text-center space-y-6">
+        <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(110,231,183,0.15)' }}>
+          <CheckCircle size={40} style={{ color: 'var(--color-success)' }} />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+            {t('contact.success_title')}
+          </h2>
+          <p className="text-[var(--color-text-muted)] text-sm max-w-xs mx-auto">
+            {t('contact.success_desc', { quoteId: store.quoteId })}
+          </p>
+        </div>
+        <div
+          className="w-full max-w-xs p-4 rounded-xl"
+          style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+        >
+          <p className="text-sm text-[var(--color-text-muted)] mb-3">{t('contact.whatsapp_cta')}</p>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium text-sm"
+            style={{ backgroundColor: '#25D366', color: 'white' }}
+          >
+            <MessageCircle size={16} />
+            {t('common.whatsapp')}
+          </a>
+        </div>
+        <div
+          className="w-full max-w-xs p-4 rounded-xl"
+          style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+        >
+          <p className="text-sm text-[var(--color-text-muted)] mb-3">{t('contact.call_cta')}</p>
+          <a
+            href={`tel:${import.meta.env.VITE_COMPANY_PHONE || '+358458844121'}`}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-medium text-sm"
+            style={{ backgroundColor: 'var(--color-accent)', color: '#0a130c' }}
+          >
+            📞 Benjamin — {import.meta.env.VITE_COMPANY_PHONE || '+358 45 884 4121'}
+          </a>
+        </div>
+      </div>
+    )
+  }
 
   const SERVICE_DETAILS = {
     dj: {
@@ -162,10 +315,6 @@ export default function Step5_Quote() {
           <div className="flex justify-between text-sm">
             <span className="text-[var(--color-text-muted)]">{lang === 'fi' ? 'Kesto' : 'Duration'}</span>
             <span className="text-[var(--color-text)]">{store.eventDetails.durationHours}h</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-[var(--color-text-muted)]">{lang === 'fi' ? 'Vieraat' : 'Guests'}</span>
-            <span className="text-[var(--color-text)]">{store.eventDetails.guestCount}</span>
           </div>
           {store.location.address && (
             <div className="flex justify-between text-sm gap-4">
@@ -346,6 +495,8 @@ export default function Step5_Quote() {
         </button>
       </div>
 
+      {submitError && <p className="text-sm text-red-400 text-center">{submitError}</p>}
+
       <div className="flex gap-3">
         <button
           onClick={store.prevStep}
@@ -354,11 +505,12 @@ export default function Step5_Quote() {
           {t('common.back')}
         </button>
         <button
-          onClick={store.nextStep}
-          className="flex-[2] py-4 rounded-xl font-semibold text-sm"
+          onClick={handleSubmit}
+          disabled={submitting}
+          className="flex-[2] py-4 rounded-xl font-semibold text-sm disabled:opacity-60"
           style={{ backgroundColor: 'var(--color-accent)', color: '#0f0f11' }}
         >
-          {t('contact.submit')} →
+          {submitting ? t('contact.submitting') : t('contact.submit')}
         </button>
       </div>
     </div>

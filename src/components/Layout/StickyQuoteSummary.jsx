@@ -2,14 +2,18 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuoteCalculator } from '../../hooks/useQuoteCalculator'
 import useQuoteStore from '../../store/quoteStore'
+import usePricingStore from '../../store/pricingStore'
 
 export default function StickyQuoteSummary() {
   const { t } = useTranslation()
   const currentStep = useQuoteStore((s) => s.currentStep)
   const selectedServices = useQuoteStore((s) => s.selectedServices)
+  const hidePricingDuringForm = usePricingStore((s) => s.hidePricingDuringForm)
   const quote = useQuoteCalculator()
 
-  if (currentStep < 3 || currentStep === 6) return null
+  // Hide on non-service steps, on the quote step (index 4 = shown there fully), and when pricing is hidden
+  if (currentStep < 1 || currentStep === 4) return null
+  if (hidePricingDuringForm && currentStep < 4) return null
 
   return (
     <div

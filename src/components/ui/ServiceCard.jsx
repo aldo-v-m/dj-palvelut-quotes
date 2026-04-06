@@ -29,6 +29,7 @@ export default function ServiceCard({ service, selected, onToggle }) {
   const Icon = ICONS[service.icon] || Music
   const colors = COLOR_MAP[service.color] || COLOR_MAP.purple
   const pricing = usePricingStore((s) => s.pricing)
+  const hidePricingDuringForm = usePricingStore((s) => s.hidePricingDuringForm)
   const basePrice = service.from_price || pricing.services[service.id]?.base_price || 0
   const durationHours = useQuoteStore((s) => s.eventDetails.durationHours) || 4
 
@@ -74,13 +75,15 @@ export default function ServiceCard({ service, selected, onToggle }) {
       <p className={`text-xs text-[var(--color-text-muted)] mb-2 leading-relaxed ${selected ? '' : 'line-clamp-2'}`}>
         {lang === 'fi' ? service.desc_fi : service.desc_en}
       </p>
-      <div className="text-xs font-semibold" style={{ color: colors.border }}>
-        {service.id === 'dj' && djExtraHours > 0
-          ? (lang === 'fi'
-              ? `Alkaen €${basePrice} + €${Math.round(djExtraCost)} (${formatExtraHours(djExtraHours)}) = €${Math.round(djTotal)}`
-              : `From €${basePrice} + €${Math.round(djExtraCost)} (${formatExtraHours(djExtraHours)}) = €${Math.round(djTotal)}`)
-          : t('services.from_price', { price: basePrice })}
-      </div>
+      {!hidePricingDuringForm && (
+        <div className="text-xs font-semibold" style={{ color: colors.border }}>
+          {service.id === 'dj' && djExtraHours > 0
+            ? (lang === 'fi'
+                ? `Alkaen €${basePrice} + €${Math.round(djExtraCost)} (${formatExtraHours(djExtraHours)}) = €${Math.round(djTotal)}`
+                : `From €${basePrice} + €${Math.round(djExtraCost)} (${formatExtraHours(djExtraHours)}) = €${Math.round(djTotal)}`)
+            : t('services.from_price', { price: basePrice })}
+        </div>
+      )}
     </motion.button>
   )
 }

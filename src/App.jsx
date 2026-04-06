@@ -7,9 +7,7 @@ import StepIndicator from './components/Layout/StepIndicator'
 import LanguageToggle from './components/Layout/LanguageToggle'
 import ProgressBar from './components/Layout/ProgressBar'
 import StickyQuoteSummary from './components/Layout/StickyQuoteSummary'
-import Step0_Language from './components/steps/Step0_Language'
 import Step1_EventDetails from './components/steps/Step1_EventDetails'
-import Step2_Location from './components/steps/Step2_Location'
 import Step3_Services from './components/steps/Step3_Services'
 import Step4_Customization from './components/steps/Step4_Customization'
 import Step5_Quote from './components/steps/Step5_Quote'
@@ -20,13 +18,11 @@ import { trackStepView } from './utils/analytics'
 import { initSession, updateSession } from './utils/analyticsTracker'
 
 const STEPS = [
-  Step0_Language,
   Step1_EventDetails,
-  Step2_Location,
   Step3_Services,
   Step4_Customization,
-  Step5_Quote,
-  Step6_Contact
+  Step6_Contact,
+  Step5_Quote
 ]
 
 const SLIDE_VARIANTS = {
@@ -103,7 +99,7 @@ export default function App() {
       quoteId:          s.quoteId,
     }
 
-    if (currentStep === 1) {
+    if (currentStep === 0) {
       initSession(s.language)
     } else {
       updateSession(currentStep, snapshot)
@@ -161,12 +157,12 @@ export default function App() {
           </div>
         )}
 
-        {currentStep > 0 && (
-          <div className="flex items-center gap-2 px-3 pt-3 pb-1">
-            <div className="flex-1">
-              <ProgressBar />
-            </div>
-            <LanguageToggle />
+        <div className="flex items-center gap-2 px-3 pt-3 pb-1">
+          <div className="flex-1">
+            <ProgressBar />
+          </div>
+          <LanguageToggle />
+          {currentStep > 0 && (
             <button
               onClick={handleReset}
               title={lang === 'fi' ? 'Aloita alusta' : 'Start fresh'}
@@ -178,10 +174,10 @@ export default function App() {
             >
               <RotateCcw size={13} />
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
-        {currentStep > 0 && <StepIndicator />}
+        <StepIndicator />
 
         <div className="relative">
           <AnimatePresence mode="wait" custom={direction}>

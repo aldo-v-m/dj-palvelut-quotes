@@ -22,7 +22,7 @@
     "3": { "title": "Services", "desc": "Choose your services" },
     "4": { "title": "Extras", "desc": "Add optional extras to your package" },
     "5": { "title": "Your Quote", "desc": "Review your personalised quote" },
-    "6": { "title": "Contact", "desc": "Send us your inquiry" }
+    "6": { "title": "Contact", "desc": "Enter your details to see your quote" }
   },
   "language": {
     "select_title": "DJ Service Price Calculator",

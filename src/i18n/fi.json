@@ -22,7 +22,7 @@
     "3": { "title": "Palvelut", "desc": "Valitse palvelut" },
     "4": { "title": "Lisäpalvelut", "desc": "Lisää valinnaisia palveluita pakettiin" },
     "5": { "title": "Tarjouksesi", "desc": "Tarkista henkil\u00f6kohtainen tarjouksesi" },
-    "6": { "title": "Yhteystiedot", "desc": "L\u00e4het\u00e4 kyselysi" }
+    "6": { "title": "Yhteystiedot", "desc": "Sy\u00f6t\u00e4 tietosi n\u00e4hd\u00e4ksesi tarjouksesi" }
   },
   "language": {
     "select_title": "DJ-hinnanlaskuri",

@@ -4,6 +4,27 @@ import usePricingStore from '../store/pricingStore'
 import defaultPricing from '../config/pricing.json'
 import AnalyticsTab from './AnalyticsTab'
 
+function Toggle({ label, desc, checked, onChange }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-3 border-b border-[var(--color-border)] last:border-0">
+      <div>
+        <p className="text-sm font-medium text-[var(--color-text)]">{label}</p>
+        {desc && <p className="text-xs text-[var(--color-text-muted)] mt-0.5">{desc}</p>}
+      </div>
+      <button
+        onClick={() => onChange(!checked)}
+        className="relative w-11 h-6 rounded-full transition-all shrink-0"
+        style={{ backgroundColor: checked ? 'var(--color-accent)' : 'var(--color-border)' }}
+      >
+        <span
+          className="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all"
+          style={{ left: checked ? '22px' : '2px' }}
+        />
+      </button>
+    </div>
+  )
+}
+
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'djadmin2024'
 
 function Field({ label, value, onChange, type = 'number', min, step = '0.01' }) {
@@ -38,7 +59,7 @@ export default function AdminPanel() {
   const [authed, setAuthed] = useState(false)
   const [pwError, setPwError] = useState(false)
   const [saved, setSaved] = useState(false)
-  const { pricing, setPricing, resetPricing, isOverridden } = usePricingStore()
+  const { pricing, setPricing, resetPricing, isOverridden, showSpecialExtras, setShowSpecialExtras, hidePricingDuringForm, setHidePricingDuringForm } = usePricingStore()
   const [draft, setDraft] = useState(() => JSON.parse(JSON.stringify(pricing)))
   const [activeTab, setActiveTab] = useState('pricing')
 
@@ -128,7 +149,7 @@ export default function AdminPanel() {
     <div className="min-h-screen px-4 py-6 space-y-5" style={{ backgroundColor: 'var(--color-bg)' }}>
       {/* Tab bar */}
       <div className="flex gap-1 p-1 rounded-xl" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
-        {['pricing', 'analytics'].map((tab) => (
+        {['pricing', 'analytics', 'settings'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -262,6 +283,31 @@ export default function AdminPanel() {
       )}
 
       {activeTab === 'analytics' && <AnalyticsTab />}
+
+      {activeTab === 'settings' && (
+        <div className="space-y-4">
+          <div>
+            <h1 className="text-2xl font-bold text-[var(--color-text)]">App Settings</h1>
+            <p className="text-xs text-[var(--color-text-muted)] mt-0.5">Feature toggles and display options</p>
+          </div>
+          <Section title="Customization Step">
+            <Toggle
+              label="Special Extras"
+              desc="Show Titis Magic dancers and Baller Stage in the customization step"
+              checked={showSpecialExtras}
+              onChange={setShowSpecialExtras}
+            />
+          </Section>
+          <Section title="Pricing Visibility">
+            <Toggle
+              label="Hide pricing during form"
+              desc="Hides running totals, prices, and discounts while the customer fills out the form. Pricing is revealed on the quote page."
+              checked={hidePricingDuringForm}
+              onChange={setHidePricingDuringForm}
+            />
+          </Section>
+        </div>
+      )}
     </div>
   )
 }

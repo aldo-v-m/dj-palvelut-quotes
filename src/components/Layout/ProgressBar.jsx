@@ -3,7 +3,7 @@ import useQuoteStore from '../../store/quoteStore'
 
 export default function ProgressBar() {
   const currentStep = useQuoteStore((s) => s.currentStep)
-  const progress = Math.round((currentStep / 6) * 100)
+  const progress = Math.round((currentStep / 4) * 100)
 
   return (
     <div className="w-full h-0.5 bg-[var(--color-border)]">

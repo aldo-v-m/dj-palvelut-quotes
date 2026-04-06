@@ -17,9 +17,9 @@ describe('quoteStore', () => {
       expect(useQuoteStore.getState().currentStep).toBe(1)
     })
 
-    it('nextStep clamps at step 6', () => {
+    it('nextStep clamps at step 4', () => {
       for (let i = 0; i < 10; i++) useQuoteStore.getState().nextStep()
-      expect(useQuoteStore.getState().currentStep).toBe(6)
+      expect(useQuoteStore.getState().currentStep).toBe(4)
     })
 
     it('prevStep clamps at step 0', () => {
