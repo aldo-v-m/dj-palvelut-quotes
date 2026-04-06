@@ -14,7 +14,7 @@
 }
 
 body {
-  background-color: var(--color-bg);
+  background-color: transparent;
   color: var(--color-text);
   font-family: 'DM Sans', sans-serif;
   margin: 0;

@@ -18,8 +18,8 @@ function loadSettings() {
 
 const usePricingStore = create((set, get) => ({
   pricing: loadPricing(),
-  showSpecialExtras: loadSettings().showSpecialExtras ?? true,
-  hidePricingDuringForm: loadSettings().hidePricingDuringForm ?? false,
+  showSpecialExtras: loadSettings().showSpecialExtras ?? false,
+  hidePricingDuringForm: loadSettings().hidePricingDuringForm ?? true,
 
   setPricing: (pricing) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pricing))
