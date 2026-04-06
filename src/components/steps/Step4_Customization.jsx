@@ -87,7 +87,7 @@ export default function Step4_Customization() {
   )
 
   return (
-    <div className="px-3 py-5 space-y-5 pb-24">
+    <div className="px-3 py-5 space-y-5">
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">
           {t('steps.4.title')}

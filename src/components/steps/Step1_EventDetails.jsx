@@ -45,7 +45,8 @@ export default function Step1_EventDetails() {
     ? Math.round((location.distanceKm - pricing.travel.free_km) * pricing.travel.rate_per_km_one_way * 2 * 100) / 100
     : 0
 
-  const hours = calcHours(eventDetails.startTime, eventDetails.endTime) || eventDetails.durationHours
+  const calculatedHours = calcHours(eventDetails.startTime, eventDetails.endTime)
+  const hours = calculatedHours || eventDetails.durationHours
 
   const handleTimeChange = (field, value) => {
     const newDetails = { ...eventDetails, [field]: value }
@@ -97,7 +98,7 @@ export default function Step1_EventDetails() {
   const isValid = eventDetails.eventType && eventDetails.date && location.address
 
   return (
-    <div className="px-3 py-5 space-y-5 pb-24">
+    <div className="px-3 py-5 space-y-5">
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">
           {t('steps.1.title')}
@@ -168,13 +169,13 @@ export default function Step1_EventDetails() {
             </div>
           ))}
         </div>
-        {hours > 0 && (
+        {calculatedHours > 0 && (
           <div
             className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm"
             style={{ backgroundColor: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)' }}
           >
             <span className="text-[var(--color-text-muted)]">{t('event.duration_calculated')}</span>
-            <span className="font-semibold text-[var(--color-accent)]">{hours}h</span>
+            <span className="font-semibold text-[var(--color-accent)]">{calculatedHours}h</span>
           </div>
         )}
       </div>

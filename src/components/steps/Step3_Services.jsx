@@ -67,7 +67,7 @@ export default function Step3_Services() {
   }
 
   return (
-    <div className="px-3 py-5 space-y-4 pb-24">
+    <div className="px-3 py-5 space-y-4">
       <div>
         <h2 className="text-xl font-bold text-[var(--color-text)] mb-1">{t('steps.3.title')}</h2>
         <p className="text-sm text-[var(--color-text-muted)]">{t('steps.3.desc')}</p>

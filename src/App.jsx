@@ -193,6 +193,8 @@ export default function App() {
               <StepComponent />
             </motion.div>
           </AnimatePresence>
+          {/* Spacer so content clears the sticky quote bar — only when bar is visible */}
+          {currentStep >= 1 && currentStep !== 4 && <div className="h-16" />}
         </div>
 
         <StickyQuoteSummary />

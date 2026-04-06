@@ -71,7 +71,7 @@ export default function Step6_Contact() {
   )
 
   return (
-    <div className="px-3 py-5 space-y-4 pb-24">
+    <div className="px-3 py-5 space-y-4">
       <div>
         <h2 className="text-2xl font-bold text-[var(--color-text)] mb-1">
           {t('steps.6.title')}

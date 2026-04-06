@@ -261,7 +261,7 @@ export default function Step5_Quote() {
   }
 
   return (
-    <div className="px-3 py-5 space-y-4 pb-24">
+    <div className="px-3 py-5 space-y-4">
       <div className="flex items-start justify-between">
         <div>
           <h2 className="text-2xl font-bold text-[var(--color-text)]">
@@ -457,16 +457,10 @@ export default function Step5_Quote() {
             ? 'Jos et ole täysin tyytyväinen, et maksa mitään. Ei kysymyksiä, ei selittelyjä — takuumme on ehdoton.'
             : 'If you are not 100% satisfied with our service, you pay absolutely nothing. No questions asked, no explanations needed — our guarantee is unconditional.'}
         </p>
-        <p className="text-sm leading-relaxed" style={{ color: 'rgba(110,231,183,0.85)' }}>
-          {lang === 'fi'
-            ? '🔄 Jos DJ sairastuu tai estyy, järjestämme korvaavan DJ:n veloituksetta — tapahtumasi ei peruunnu koskaan.'
-            : '🔄 If your DJ is sick or unavailable, we will find a replacement at no extra cost — your event will never be cancelled.'}
-        </p>
         <div className="flex justify-center flex-wrap gap-4 pt-1 text-xs font-medium" style={{ color: 'rgba(110,231,183,0.7)' }}>
           <span>✓ {lang === 'fi' ? 'Ei riskiä' : 'Zero risk'}</span>
           <span>✓ {lang === 'fi' ? 'Ei piilomaksuja' : 'No hidden fees'}</span>
           <span>✓ {lang === 'fi' ? 'Ehdoton takuu' : 'Unconditional'}</span>
-          <span>✓ {lang === 'fi' ? 'Varamies-DJ tarvittaessa' : 'Free DJ replacement if needed'}</span>
         </div>
       </div>
 
