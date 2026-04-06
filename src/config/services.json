@@ -5,8 +5,8 @@
     "color": "purple",
     "name_en": "DJ Services",
     "name_fi": "DJ-palvelut",
-    "desc_en": "Professional DJ Controller included. Up to 5 hours of DJ playing + setup & teardown. Extra hours €50/h.",
-    "desc_fi": "Ammattitaitoinen DJ-kontrolleri mukana. Sisältää 5 tuntia soittoa + pystytys ja purku. Lisätunnit €50/h.",
+    "desc_en": "Professional DJ Controller included. Up to 5 hours of DJ playing + setup & teardown.",
+    "desc_fi": "Ammattitaitoinen DJ-kontrolleri mukana. Sisältää 5 tuntia soittoa + pystytys ja purku.",
     "from_price": 450,
     "popular": true
   },
@@ -38,8 +38,8 @@
     "color": "coral",
     "name_en": "Karaoke",
     "name_fi": "Karaoke",
-    "desc_en": "24\" screen, Finland's largest song selection, 2 microphones — €150",
-    "desc_fi": "24\" näyttö, Suomen isoin biisvalikoima, 2 mikrofonia — €150",
+    "desc_en": "24\" screen, Finland's largest song selection, 2 microphones.",
+    "desc_fi": "24\" näyttö, Suomen isoin biisvalikoima, 2 mikrofonia.",
     "from_price": 150,
     "popular": false
   }

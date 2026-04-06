@@ -125,7 +125,7 @@ export default function Step4_Customization() {
             emoji="🔊"
             price={100}
             label={lang === 'fi' ? 'Lisäsubwoofer' : 'Extra Subwoofer'}
-            desc={lang === 'fi' ? 'Suositellaan yli 150 hengen tapahtumiin — €100/kpl' : 'Recommended for events with 150+ guests — €100 each'}
+            desc={lang === 'fi' ? 'Suositellaan yli 150 hengen tapahtumiin' : 'Recommended for events with 150+ guests'}
             checked={isChecked('audio', 'extra_sub')}
             onToggle={() => toggleAddon('audio', 'extra_sub')}
             quantity={qty('audio', 'extra_sub')}
@@ -141,8 +141,8 @@ export default function Step4_Customization() {
             price={75}
             label={lang === 'fi' ? 'Lisäkaiuttimet' : 'Extra Speakers'}
             desc={lang === 'fi'
-              ? 'Suositellaan yli 150 hengen tai isoon tilaan — taustamusiikki terassille tai muihin tiloihin. €75/kpl, max 8 kpl'
-              : 'Recommended for 150+ guests or large venues — background music on terrace or other areas. €75 each, up to 8'}
+              ? 'Suositellaan yli 150 hengen tai isoon tilaan — taustamusiikki terassille tai muihin tiloihin'
+              : 'Recommended for 150+ guests or large venues — background music on terrace or other areas'}
             checked={isChecked('audio', 'extra_speakers')}
             onToggle={() => toggleAddon('audio', 'extra_speakers')}
             quantity={qty('audio', 'extra_speakers')}
