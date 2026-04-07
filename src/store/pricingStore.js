@@ -20,6 +20,7 @@ const usePricingStore = create((set, get) => ({
   pricing: loadPricing(),
   showSpecialExtras: loadSettings().showSpecialExtras ?? false,
   hidePricingDuringForm: loadSettings().hidePricingDuringForm ?? true,
+  requirePhone: loadSettings().requirePhone ?? false,
 
   setPricing: (pricing) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pricing))
@@ -43,6 +44,12 @@ const usePricingStore = create((set, get) => ({
     const s = loadSettings()
     localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...s, hidePricingDuringForm: val }))
     set({ hidePricingDuringForm: val })
+  },
+
+  setRequirePhone: (val) => {
+    const s = loadSettings()
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ ...s, requirePhone: val }))
+    set({ requirePhone: val })
   }
 }))
 

@@ -6,21 +6,28 @@ import { z } from 'zod'
 import useQuoteStore from '../../store/quoteStore'
 import usePricingStore from '../../store/pricingStore'
 
-const schema = z.object({
+const baseSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email'),
-  phone: z.string().optional().refine(
-    (v) => !v || /^\+?[\d\s\-().]{7,20}$/.test(v),
-    'Invalid phone number'
-  ),
   message: z.string().optional()
 })
+
+const phoneOptional = z.string().optional().refine(
+  (v) => !v || /^\+?[\d\s\-().]{7,20}$/.test(v),
+  'Invalid phone number'
+)
+
+const phoneRequired = z.string().min(1, 'Phone number is required').refine(
+  (v) => /^\+?[\d\s\-().]{7,20}$/.test(v),
+  'Invalid phone number'
+)
 
 export default function Step6_Contact() {
   const { t, i18n } = useTranslation()
   const lang = i18n.language
   const store = useQuoteStore()
   const showSpecialExtras = usePricingStore((s) => s.showSpecialExtras)
+  const requirePhone = usePricingStore((s) => s.requirePhone)
 
   const hasCustomizationOptions =
     store.selectedServices.includes('lighting') ||
@@ -28,6 +35,8 @@ export default function Step6_Contact() {
     showSpecialExtras
 
   const handleBack = () => hasCustomizationOptions ? store.prevStep() : store.goToStep(1)
+
+  const schema = baseSchema.extend({ phone: requirePhone ? phoneRequired : phoneOptional })
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -82,7 +91,7 @@ export default function Step6_Contact() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Field name="name" label={t('contact.name_label')} placeholder={t('contact.name_placeholder')} required />
         <Field name="email" label={t('contact.email_label')} placeholder={t('contact.email_placeholder')} type="email" required />
-        <Field name="phone" label={t('contact.phone_label')} placeholder={t('contact.phone_placeholder')} type="tel" />
+        <Field name="phone" label={t('contact.phone_label')} placeholder={t('contact.phone_placeholder')} type="tel" required={requirePhone} />
         <Field name="message" label={t('contact.message_label')} placeholder={t('contact.message_placeholder')} rows={3} />
 
         <div className="flex gap-3 pt-2">

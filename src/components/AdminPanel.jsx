@@ -59,7 +59,7 @@ export default function AdminPanel() {
   const [authed, setAuthed] = useState(false)
   const [pwError, setPwError] = useState(false)
   const [saved, setSaved] = useState(false)
-  const { pricing, setPricing, resetPricing, isOverridden, showSpecialExtras, setShowSpecialExtras, hidePricingDuringForm, setHidePricingDuringForm } = usePricingStore()
+  const { pricing, setPricing, resetPricing, isOverridden, showSpecialExtras, setShowSpecialExtras, hidePricingDuringForm, setHidePricingDuringForm, requirePhone, setRequirePhone } = usePricingStore()
   const [draft, setDraft] = useState(() => JSON.parse(JSON.stringify(pricing)))
   const [activeTab, setActiveTab] = useState('pricing')
 
@@ -304,6 +304,14 @@ export default function AdminPanel() {
               desc="Hides running totals, prices, and discounts while the customer fills out the form. Pricing is revealed on the quote page."
               checked={hidePricingDuringForm}
               onChange={setHidePricingDuringForm}
+            />
+          </Section>
+          <Section title="Contact Form">
+            <Toggle
+              label="Require phone number"
+              desc="When enabled, customers must provide a phone number before proceeding to the quote."
+              checked={requirePhone}
+              onChange={setRequirePhone}
             />
           </Section>
         </div>
