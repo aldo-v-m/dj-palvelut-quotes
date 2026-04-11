@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import useQuoteStore from '../../store/quoteStore'
 import usePricingStore from '../../store/pricingStore'
+import { trackMetaEvent } from '../../utils/metaPixel'
 
 const baseSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -50,6 +51,7 @@ export default function Step6_Contact() {
 
   const onSubmit = (data) => {
     store.setContact(data)
+    trackMetaEvent('Lead', { email: data.email, phone: data.phone || undefined })
     store.nextStep()
   }
 
