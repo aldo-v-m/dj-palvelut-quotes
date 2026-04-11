@@ -34,16 +34,6 @@ export default function Step5_Quote() {
       services: store.selectedServices,
       eventType: store.eventDetails.eventType
     })
-    trackMetaEvent('AddToCart', {
-      email: store.contact.email || undefined,
-      phone: store.contact.phone || undefined,
-      customData: {
-        value: quote.totalWithVat,
-        currency: 'EUR',
-        content_name: store.selectedServices.join(', '),
-        content_type: 'product',
-      },
-    })
   }, [])
 
   const handleShare = () => {
@@ -138,6 +128,15 @@ export default function Step5_Quote() {
         services: store.selectedServices,
         eventType: store.eventDetails.eventType,
         quoteId: store.quoteId
+      })
+      trackMetaEvent('Lead', {
+        email: store.contact.email || undefined,
+        phone: store.contact.phone || undefined,
+        customData: {
+          value: quote.totalWithVat,
+          currency: 'EUR',
+          content_name: store.selectedServices.join(', '),
+        },
       })
       completeSession()
       await saveQuoteToAirtable(airtableRecord)

@@ -51,7 +51,7 @@ export default function Step6_Contact() {
 
   const onSubmit = (data) => {
     store.setContact(data)
-    trackMetaEvent('Lead', { email: data.email, phone: data.phone || undefined })
+    trackMetaEvent('AddToCart', { email: data.email, phone: data.phone || undefined })
     store.nextStep()
   }
 
