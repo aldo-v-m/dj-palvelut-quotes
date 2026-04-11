@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,6 +30,10 @@ export default function Step6_Contact() {
   const showSpecialExtras = usePricingStore((s) => s.showSpecialExtras)
   const requirePhone = usePricingStore((s) => s.requirePhone)
 
+  useEffect(() => {
+    trackMetaEvent('AddToCart')
+  }, [])
+
   const hasCustomizationOptions =
     store.selectedServices.includes('lighting') ||
     store.selectedServices.includes('audio') ||
@@ -51,7 +55,6 @@ export default function Step6_Contact() {
 
   const onSubmit = (data) => {
     store.setContact(data)
-    trackMetaEvent('AddToCart', { email: data.email, phone: data.phone || undefined })
     store.nextStep()
   }
 
