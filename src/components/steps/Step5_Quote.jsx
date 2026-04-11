@@ -11,6 +11,7 @@ import { exportQuotePDF } from '../../utils/pdfExport'
 import { trackQuoteViewed, trackLeadSubmitted } from '../../utils/analytics'
 import { saveQuoteToAirtable } from '../../utils/airtable'
 import { completeSession } from '../../utils/analyticsTracker'
+import { trackMetaEvent } from '../../utils/metaPixel'
 import services from '../../config/services.json'
 
 export default function Step5_Quote() {
@@ -32,6 +33,16 @@ export default function Step5_Quote() {
       total: quote.totalWithVat,
       services: store.selectedServices,
       eventType: store.eventDetails.eventType
+    })
+    trackMetaEvent('AddToCart', {
+      email: store.contact.email || undefined,
+      phone: store.contact.phone || undefined,
+      customData: {
+        value: quote.totalWithVat,
+        currency: 'EUR',
+        content_name: store.selectedServices.join(', '),
+        content_type: 'product',
+      },
     })
   }, [])
 
