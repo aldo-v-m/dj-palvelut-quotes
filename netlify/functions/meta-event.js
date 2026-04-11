@@ -1,22 +1,8 @@
+import { createHash } from 'crypto'
+
 const CAPI_URL = 'https://graph.facebook.com/v19.0'
 
-/**
- * Netlify serverless function — Meta Conversions API proxy.
- *
- * POST body fields:
- *   eventName    {string}  e.g. "Lead", "ViewContent"
- *   eventId      {string}  deduplication ID (must match fbq event_id)
- *   eventTime    {number}  Unix timestamp (seconds)
- *   sourceUrl    {string}  page URL
- *   email        {string}  optional — will be hashed server-side
- *   phone        {string}  optional — will be hashed server-side
- *   clientIp     {string}  passed from browser (see note below)
- *   userAgent    {string}
- *   fbp          {string}  _fbp cookie value
- *   fbc          {string}  _fbc cookie value
- *   customData   {object}  optional (value, currency, content_name, etc.)
- */
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
   }
@@ -54,9 +40,8 @@ exports.handler = async (event) => {
   }
 
   // Hash PII server-side with SHA-256
-  const crypto = await import('crypto')
   const hash = (val) =>
-    val ? crypto.createHash('sha256').update(val.trim().toLowerCase()).digest('hex') : undefined
+    val ? createHash('sha256').update(val.trim().toLowerCase()).digest('hex') : undefined
 
   const userData = {
     ...(email && { em: [hash(email)] }),
