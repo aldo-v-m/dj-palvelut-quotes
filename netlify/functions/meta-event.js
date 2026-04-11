@@ -55,6 +55,7 @@ export const handler = async (event) => {
   }
 
   const payload = {
+    test_event_code: 'TEST10035', // TODO: remove after testing
     data: [
       {
         event_name: eventName,
