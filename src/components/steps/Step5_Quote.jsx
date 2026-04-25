@@ -9,7 +9,7 @@ import QuoteExpiry from '../ui/QuoteExpiry'
 import { generateQuoteId, getQuoteExpiry } from '../../utils/quoteId'
 import { exportQuotePDF } from '../../utils/pdfExport'
 import { trackQuoteViewed, trackLeadSubmitted } from '../../utils/analytics'
-import { saveQuoteToAirtable } from '../../utils/airtable'
+import { saveLeadToSheets } from '../../utils/googleSheets'
 import { completeSession } from '../../utils/analyticsTracker'
 import { trackMetaEvent } from '../../utils/metaPixel'
 import services from '../../config/services.json'
@@ -139,7 +139,7 @@ export default function Step5_Quote() {
         },
       })
       completeSession()
-      await saveQuoteToAirtable(airtableRecord)
+      await saveLeadToSheets(airtableRecord)
       sendWhatsApp()
       store.setSubmitted(true)
       setSuccess(true)
